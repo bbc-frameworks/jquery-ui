@@ -53,11 +53,46 @@ $.extend( $.ui, {
 		TAB: 9,
 		UP: 38,
 		WINDOWS: 91 // COMMAND
+	},
+	className: function(cName) {
+		var version = $.ui.version;
+		if ( version === "@VERSION" ) {
+			version = "-DEV";
+		}
+		return cName + version;
 	}
 });
 
 // plugins
 $.fn.extend({
+	_addClass: $.fn.addClass,
+	addClass: function(value, useVersion) {
+		if ( useVersion && value && typeof value === "string" ) {
+			value = $.ui.className(value);
+		}
+		return $.fn._addClass(value);
+	},
+	_removeClass: $.fn.addClass,
+	removeClass: function(value, useVersion) {
+		if ( useVersion && value && typeof value === "string" ) {
+			value = $.ui.className(value);
+		}
+		return $.fn._removeClass(value);
+	},
+	_hasClass: $.fn.addClass,
+	hasClass: function(value, useVersion) {
+		if ( useVersion && value && typeof value === "string" ) {
+			value = $.ui.className(value);
+		}
+		return $.fn._hasClass(value);
+	},
+	_toggleClass: $.fn.addClass,
+	toggleClass: function(value, stateVal, useVersion) {
+		if ( useVersion && value && typeof value === "string" ) {
+			value = $.ui.className(value);
+		}
+		return $.fn._toggleClass(value, stateVal);
+	},
 	_focus: $.fn.focus,
 	focus: function( delay, fn ) {
 		return typeof delay === "number" ?

@@ -32,7 +32,7 @@ $.widget( "ui.autocomplete", {
 			suppressKeyPress;
 
 		this.element
-			.addClass( "ui-autocomplete-input" )
+			.addClass( "ui-autocomplete-input", true )
 			.attr( "autocomplete", "off" )
 			// TODO verify these actually work as intended
 			.attr({
@@ -128,7 +128,7 @@ $.widget( "ui.autocomplete", {
 			return self._response.apply( self, arguments );
 		};
 		this.menu = $( "<ul></ul>" )
-			.addClass( "ui-autocomplete" )
+			.addClass( "ui-autocomplete", true )
 			.appendTo( $( this.options.appendTo || "body", doc )[0] )
 			// prevent the close-on-blur in case of a "slow" click on the menu (long mousedown)
 			.mousedown(function( event ) {
@@ -209,7 +209,7 @@ $.widget( "ui.autocomplete", {
 
 	destroy: function() {
 		this.element
-			.removeClass( "ui-autocomplete-input" )
+			.removeClass( "ui-autocomplete-input", true )
 			.removeAttr( "autocomplete" )
 			.removeAttr( "role" )
 			.removeAttr( "aria-autocomplete" )
@@ -274,7 +274,7 @@ $.widget( "ui.autocomplete", {
 	},
 
 	_search: function( value ) {
-		this.element.addClass( "ui-autocomplete-loading" );
+		this.element.addClass( "ui-autocomplete-loading", true );
 
 		this.source( { term: value }, this.response );
 	},
@@ -287,7 +287,7 @@ $.widget( "ui.autocomplete", {
 		} else {
 			this.close();
 		}
-		this.element.removeClass( "ui-autocomplete-loading" );
+		this.element.removeClass( "ui-autocomplete-loading", true );
 	},
 
 	close: function( event ) {
@@ -413,7 +413,8 @@ $.widget("ui.menu", {
 	_create: function() {
 		var self = this;
 		this.element
-			.addClass("ui-menu ui-widget ui-widget-content ui-corner-all")
+			.addClass("ui-menu ui-widget", true)
+			.addClass("ui-widget-content ui-corner-all")
 			.attr({
 				role: "listbox",
 				"aria-activedescendant": "ui-active-menuitem"
@@ -434,7 +435,7 @@ $.widget("ui.menu", {
 
 		// don't refresh list items that are already adapted
 		var items = this.element.children("li:not(.ui-menu-item):has(a)")
-			.addClass("ui-menu-item")
+			.addClass("ui-menu-item", true)
 			.attr("role", "menuitem");
 		
 		items.children("a")
