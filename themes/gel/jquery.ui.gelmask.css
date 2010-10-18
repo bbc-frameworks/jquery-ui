@@ -1,0 +1,5 @@
+/*
+ * jQuery Gelmask
+ */
+
+.ui-gelmask { position:absolute; z-index:999999; width:100%; height:100%; top:0px; left:0px; bottom:0px; right:0px; background-color:black; opacity:0.8; }
