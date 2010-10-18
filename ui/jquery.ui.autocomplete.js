@@ -137,7 +137,7 @@ $.widget( "ui.autocomplete", {
 				// so we have to track the next mousedown and close the menu if
 				// the user clicks somewhere outside of the autocomplete
 				var menuElement = self.menu.element[ 0 ];
-				if ( !$( event.target ).closest( ".ui-menu-item" ).length ) {
+				if ( !$( event.target ).closest( "."+$.ui.cName("ui-menu-item")+"" ).length ) {
 					setTimeout(function() {
 						$( document ).one( 'mousedown', function( event ) {
 							if ( event.target !== self.element[ 0 ] &&
@@ -413,14 +413,14 @@ $.widget("ui.menu", {
 	_create: function() {
 		var self = this;
 		this.element
-			.addClass("ui-menu ui-widget", true)
-			.addClass("ui-widget-content ui-corner-all")
+			.addClass("ui-menu", true)
+			.addClass("ui-widget ui-widget-content ui-corner-all")
 			.attr({
 				role: "listbox",
 				"aria-activedescendant": "ui-active-menuitem"
 			})
 			.click(function( event ) {
-				if ( !$( event.target ).closest( ".ui-menu-item a" ).length ) {
+				if ( !$( event.target ).closest( "."+$.ui.cName("ui-menu-item")+" a" ).length ) {
 					return;
 				}
 				// temporary
@@ -434,7 +434,7 @@ $.widget("ui.menu", {
 		var self = this;
 
 		// don't refresh list items that are already adapted
-		var items = this.element.children("li:not(.ui-menu-item):has(a)")
+		var items = this.element.children("li:not(."+$.ui.cName("ui-menu-item")+"):has(a)")
 			.addClass("ui-menu-item", true)
 			.attr("role", "menuitem");
 		
@@ -481,19 +481,19 @@ $.widget("ui.menu", {
 	},
 
 	next: function(event) {
-		this.move("next", ".ui-menu-item:first", event);
+		this.move("next", "."+$.ui.cName("ui-menu-item")+":first", event);
 	},
 
 	previous: function(event) {
-		this.move("prev", ".ui-menu-item:last", event);
+		this.move("prev", "."+$.ui.cName("ui-menu-item")+":last", event);
 	},
 
 	first: function() {
-		return this.active && !this.active.prevAll(".ui-menu-item").length;
+		return this.active && !this.active.prevAll("."+$.ui.cName("ui-menu-item")+"").length;
 	},
 
 	last: function() {
-		return this.active && !this.active.nextAll(".ui-menu-item").length;
+		return this.active && !this.active.nextAll("."+$.ui.cName("ui-menu-item")+"").length;
 	},
 
 	move: function(direction, edge, event) {
@@ -501,7 +501,7 @@ $.widget("ui.menu", {
 			this.activate(event, this.element.children(edge));
 			return;
 		}
-		var next = this.active[direction + "All"](".ui-menu-item").eq(0);
+		var next = this.active[direction + "All"]("."+$.ui.cName("ui-menu-item")+"").eq(0);
 		if (next.length) {
 			this.activate(event, next);
 		} else {
@@ -514,12 +514,12 @@ $.widget("ui.menu", {
 		if (this.hasScroll()) {
 			// TODO merge with no-scroll-else
 			if (!this.active || this.last()) {
-				this.activate(event, this.element.children(".ui-menu-item:first"));
+				this.activate(event, this.element.children("."+$.ui.cName("ui-menu-item")+":first"));
 				return;
 			}
 			var base = this.active.offset().top,
 				height = this.element.height(),
-				result = this.element.children(".ui-menu-item").filter(function() {
+				result = this.element.children("."+$.ui.cName("ui-menu-item")+"").filter(function() {
 					var close = $(this).offset().top - base - height + $(this).height();
 					// TODO improve approximation
 					return close < 10 && close > -10;
@@ -527,11 +527,11 @@ $.widget("ui.menu", {
 
 			// TODO try to catch this earlier when scrollTop indicates the last page anyway
 			if (!result.length) {
-				result = this.element.children(".ui-menu-item:last");
+				result = this.element.children("."+$.ui.cName("ui-menu-item")+":last");
 			}
 			this.activate(event, result);
 		} else {
-			this.activate(event, this.element.children(".ui-menu-item")
+			this.activate(event, this.element.children("."+$.ui.cName("ui-menu-item")+"")
 				.filter(!this.active || this.last() ? ":first" : ":last"));
 		}
 	},
@@ -541,13 +541,13 @@ $.widget("ui.menu", {
 		if (this.hasScroll()) {
 			// TODO merge with no-scroll-else
 			if (!this.active || this.first()) {
-				this.activate(event, this.element.children(".ui-menu-item:last"));
+				this.activate(event, this.element.children("."+$.ui.cName("ui-menu-item")+":last"));
 				return;
 			}
 
 			var base = this.active.offset().top,
 				height = this.element.height();
-				result = this.element.children(".ui-menu-item").filter(function() {
+				result = this.element.children("."+$.ui.cName("ui-menu-item")+"").filter(function() {
 					var close = $(this).offset().top - base + height - $(this).height();
 					// TODO improve approximation
 					return close < 10 && close > -10;
@@ -555,11 +555,11 @@ $.widget("ui.menu", {
 
 			// TODO try to catch this earlier when scrollTop indicates the last page anyway
 			if (!result.length) {
-				result = this.element.children(".ui-menu-item:first");
+				result = this.element.children("."+$.ui.cName("ui-menu-item")+":first");
 			}
 			this.activate(event, result);
 		} else {
-			this.activate(event, this.element.children(".ui-menu-item")
+			this.activate(event, this.element.children("."+$.ui.cName("ui-menu-item")+"")
 				.filter(!this.active || this.first() ? ":last" : ":first"));
 		}
 	},

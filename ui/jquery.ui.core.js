@@ -54,12 +54,17 @@ $.extend( $.ui, {
 		UP: 38,
 		WINDOWS: 91 // COMMAND
 	},
-	className: function(cName) {
-		var version = $.ui.version;
+	cName: function(c) {
+		var version = $.ui.version,
+			a = c.split(" "),
+			s = "";
 		if ( version === "@VERSION" ) {
 			version = "-DEV";
 		}
-		return cName + version;
+		for ( var i=0, ii=a.length; i<ii; i++ ) {
+			s = a[i]+version;
+		}
+		return s;
 	}
 });
 
@@ -68,31 +73,31 @@ $.fn.extend({
 	_addClass: $.fn.addClass,
 	addClass: function(value, useVersion) {
 		if ( useVersion && value && typeof value === "string" ) {
-			value = $.ui.className(value);
+			value = $.ui.cName(value);
 		}
-		return $.fn._addClass(value);
+		return this._addClass.apply(this, arguments);
 	},
-	_removeClass: $.fn.addClass,
-	removeClass: function(value, useVersion) {
-		if ( useVersion && value && typeof value === "string" ) {
-			value = $.ui.className(value);
-		}
-		return $.fn._removeClass(value);
-	},
-	_hasClass: $.fn.addClass,
-	hasClass: function(value, useVersion) {
-		if ( useVersion && value && typeof value === "string" ) {
-			value = $.ui.className(value);
-		}
-		return $.fn._hasClass(value);
-	},
-	_toggleClass: $.fn.addClass,
-	toggleClass: function(value, stateVal, useVersion) {
-		if ( useVersion && value && typeof value === "string" ) {
-			value = $.ui.className(value);
-		}
-		return $.fn._toggleClass(value, stateVal);
-	},
+	// _removeClass: $.fn.addClass,
+	// removeClass: function(value, useVersion) {
+	// 	if ( useVersion && value && typeof value === "string" ) {
+	// 		value = $.ui.cName(value);
+	// 	}
+	// 	return this._removeClass.apply(this, arguments);
+	// },
+	// _hasClass: $.fn.addClass,
+	// hasClass: function(value, useVersion) {
+	// 	if ( useVersion && value && typeof value === "string" ) {
+	// 		value = $.ui.cName(value);
+	// 	}
+	// 	return this._hasClass.apply(this, arguments);
+	// },
+	// _toggleClass: $.fn.addClass,
+	// toggleClass: function(value, stateVal, useVersion) {
+	// 	if ( useVersion && value && typeof value === "string" ) {
+	// 		value = $.ui.cName(value);
+	// 	}
+	// 	return this._toggleClass.apply(this, arguments);
+	// },
 	_focus: $.fn.focus,
 	focus: function( delay, fn ) {
 		return typeof delay === "number" ?
