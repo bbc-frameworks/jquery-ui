@@ -193,63 +193,6 @@ $.widget("ui.geloverlay", {
 		return self;
 	},
 
-	_setOption: function(key, value){
-		var self = this,
-			uiGeloverlay = self.uiGeloverlay,
-			resize = false;
-
-		switch (key) {
-			//handling of deprecated beforeclose (vs beforeClose) option
-			//Ticket #4669 http://dev.jqueryui.com/ticket/4669
-			//TODO: remove in 1.9pre
-			case "beforeclose":
-				key = "beforeClose";
-				break;
-			case "closeText":
-				// convert whatever was passed in to a string, for text() to not throw up
-				self.uiGeloverlayCloseText.text("" + value);
-				break;
-			case "geloverlayClass":
-				uiGeloverlay
-					.removeClass(self.options.geloverlayClass)
-					.addClass(uiGeloverlayClasses + value);
-				break;
-			case "disabled":
-				if (value) {
-					uiGeloverlay.addClass('ui-geloverlay-disabled');
-				} else {
-					uiGeloverlay.removeClass('ui-geloverlay-disabled');
-				}
-				break;
-			case "height":
-				resize = true;
-				break;
-			case "maxHeight":
-				resize = true;
-				break;
-			case "maxWidth":
-				resize = true;
-				break;
-			case "minHeight":
-				resize = true;
-				break;
-			case "minWidth":
-				resize = true;
-				break;
-			case "position":
-				self._position(value);
-				break;
-			case "width":
-				resize = true;
-				break;
-		}
-
-		$.Widget.prototype._setOption.apply(self, arguments);
-		if (resize) {
-			self._size();
-		}
-	},
-
 	_size: function() {
 		/* If the user has resized the geloverlay, the .ui-geloverlay and .ui-geloverlay-content
 		 * divs will both have width and height set, so we need to reset them
