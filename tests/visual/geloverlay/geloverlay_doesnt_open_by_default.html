@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8" />
-	<title>Dialog Visual Test : Shouldn't open by default</title>
+	<title>Geloveraly Visual Test : Shouldn't open by default</title>
 	<link rel="stylesheet" href="../visual.css" type="text/css" />
 	<link rel="stylesheet" href="../../../themes/gel/jquery.ui.all.css" type="text/css">
 	<script type="text/javascript" src="../../../../jquery-ui/jquery-1.4.2.js"></script>
@@ -12,13 +12,14 @@
 	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.mouse.js"></script>
 	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.position.js"></script>
 	<script type="text/javascript" src="../../../ui/jquery.ui.gelcore.js"></script>
-	<script type="text/javascript" src="../../../ui/jquery.ui.geldialog.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.gelmodal.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.geloverlay.js"></script>
 	<script type="text/javascript">
 	$(function() {
 		
-		$('#dialog').geldialog({autoOpen:false});
+		$('#dialog').geloverlay({autoOpen:false});
 		$('#handle').click(function() {
-		  $('#dialog').geldialog().geldialog('open');
+		  $('#dialog').geloverlay().geloverlay('open');
 		  return false;
 		});
 		
@@ -28,7 +29,7 @@
 <body class="dark">
     <div id="blq-container" style="position:relative">
     <button id="handle">Click me to open dialog!</button>
-    <div id="dialog" title="Dialog Title">
+    <div id="dialog" title="Geloveraly Title">
         <p id="msg">I should <strong>NEVER</strong> be open by default!</p>
     </div>
     </div>

@@ -14,7 +14,6 @@
  *	jquery.ui.mouse.js
  *	jquery.ui.position.js
  *	jquery.ui.gelmodal.js
- *	jquery.ui.gelscreenmask.js
  *	jquery.ui.resizable.js
  */
 (function( $, undefined ) {

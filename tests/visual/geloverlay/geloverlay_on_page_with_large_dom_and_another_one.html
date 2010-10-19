@@ -12,20 +12,21 @@
 	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.mouse.js"></script>
 	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.position.js"></script>
 	<script type="text/javascript" src="../../../ui/jquery.ui.gelcore.js"></script>
-	<script type="text/javascript" src="../../../ui/jquery.ui.geldialog.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.gelmodal.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.geloverlay.js"></script>
 	<script type="text/javascript">
 	$(function() {
-		$("#dialog").geldialog({
+		$("#dialog").geloverlay({
 			autoOpen: false
 		});
-		$("#dialog2").geldialog({
+		$("#dialog2").geloverlay({
             autoOpen: false
         });
 		$('#opener').click(function() {
-			$('#dialog').geldialog('open');
+			$('#dialog').geloverlay('open');
 		});
 		$('#another').click(function(e) {
-            $('#dialog2').geldialog('open');
+            $('#dialog2').geloverlay('open');
             e.preventDefault();
             return false;
             

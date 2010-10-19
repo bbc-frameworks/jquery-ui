@@ -13,7 +13,8 @@
 	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.mouse.js"></script>
 	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.position.js"></script>
 	<script type="text/javascript" src="../../../ui/jquery.ui.gelcore.js"></script>
-	<script type="text/javascript" src="../../../ui/jquery.ui.geldialog.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.gelmodal.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.geloverlay.js"></script>
 	<style>
 	   #out {
 	       outline: 1px solid black;
@@ -21,11 +22,11 @@
 	</style>
 	<script type="text/javascript">
 	$(function(){
-        var p = $('#out').geldialog(/*{
+        var p = $('#out').geloverlay(/*{
             position:  'top'
-        }*/).geldialog('open');
+        }*/).geloverlay('open');
         /*log( 'Window width: ' + $(window).width() );
-        log( 'Dialog outerwidth: ' + (p.geldialog('widget').outerWidth() / 2) );
+        log( 'Dialog outerwidth: ' + (p.geloverlay('widget').outerWidth() / 2) );
         log( 'Window scrollLeft: ' + $(window).scrollLeft() );
         log( 'Window scrollTop: ' + $(window).scrollTop() );*/
     });
