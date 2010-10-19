@@ -31,6 +31,7 @@ $.widget("ui.gelmodal", {
 	_zIndex: 999999,
 	
 	_create: function() {
+		console.log('create');
 		if ( this.options.overlay ) this._makeOverlay();
 		this.element
 			.css({

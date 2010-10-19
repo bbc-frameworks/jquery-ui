@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Dialog Visual Test : Dialog moves when we resize the window</title>
+	<link rel="stylesheet" href="../visual.css" type="text/css" />
+	<!-- <link rel="stylesheet" href="../../../../jquery-ui/themes/base/jquery.ui.all.css" type="text/css">-->
+	<link rel="stylesheet" href="../../../themes/gel/jquery.ui.all.css" type="text/css">
+	<script type="text/javascript" src="../../../../jquery-ui/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="../../../../jquery-ui/external/jquery.bgiframe-2.1.1.js"></script>
+	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.mouse.js"></script>
+	<script type="text/javascript" src="../../../../jquery-ui/ui/jquery.ui.position.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.gelcore.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.geldialog.js"></script>
+	<style>
+	   #out {
+	       outline: 1px solid black;
+	   }
+	</style>
+	<script type="text/javascript">
+	$(function(){
+        var p = $('#out').geldialog(/*{
+            position:  'top'
+        }*/).geldialog('open');
+        /*log( 'Window width: ' + $(window).width() );
+        log( 'Dialog outerwidth: ' + (p.geldialog('widget').outerWidth() / 2) );
+        log( 'Window scrollLeft: ' + $(window).scrollLeft() );
+        log( 'Window scrollTop: ' + $(window).scrollTop() );*/
+    });
+	</script>
+</head>
+<body>
+    <div id="blq-container" style="position: absolute; top: 100px; left: 120px; ">
+        <div id="out"></div>
+    </div>
+</body>
+</html>
