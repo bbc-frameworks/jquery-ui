@@ -74,9 +74,8 @@ test("beforeClose", function() {
 		autoOpen: true
 	});
 	widget = el.geloverlay('widget');
-	
 	el.geloverlay('close');
-	ok(widget.is(":visible"), 'beforeClose callback should prevent geloverlay from closing');
+	ok(widget.is(":visible"), 'beforeClose CREATE OPTION callback should prevent geloverlay from closing');
 	el.remove();
 
 	el = $('<div></div>').geloverlay({autoOpen:true});
@@ -88,7 +87,8 @@ test("beforeClose", function() {
 		return false;
 	});
 	el.geloverlay('close');
-	ok(widget.is(":visible"), 'beforeClose callback should prevent geloverlay from closing');
+	widget = el.geloverlay('widget');
+	ok(widget.is(":visible"), 'beforeClose ADDED OPTION callback should prevent geloverlay from closing');
 	el.remove();
 
 	el = $('<div></div>').geloverlay({autoOpen:true}).bind('geloverlaybeforeclose', function(ev, ui) {
@@ -98,6 +98,7 @@ test("beforeClose", function() {
 		return false;
 	});
 	el.geloverlay('close');
+	widget = el.geloverlay('widget');
 	ok(widget.is(":visible"), 'geloverlaybeforeclose event should prevent geloverlay from closing');
 	el.remove();
 });

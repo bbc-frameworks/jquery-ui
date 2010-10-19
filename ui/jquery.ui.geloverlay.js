@@ -125,7 +125,7 @@ $.widget("ui.geloverlay", {
 
 	close: function(event) {
 		var self = this;
-		
+
 		if (false === self._trigger('beforeClose', event)) {
 			return false;
 		}
