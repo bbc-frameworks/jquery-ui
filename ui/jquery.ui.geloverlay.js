@@ -35,9 +35,9 @@ $.widget("ui.geloverlay", {
 		minHeight: 150,
 		minWidth: 150,
 		show: null,
-		stack: true,
 		width: 300,
-		zIndex: 1000
+		zIndex: 1000,
+		position: undefined
 	},
 
 	_create: function() {
@@ -47,6 +47,7 @@ $.widget("ui.geloverlay", {
 			
 			uiGeloverlay = (self.uiGeloverlay = $('<div></div>'))
 				.appendTo(document.body)
+				.attr({role: 'dialog'})
 				.hide()
 				.addClass(uiGeloverlayClasses + options.geloverlayClass)
 				.css({
@@ -99,7 +100,7 @@ $.widget("ui.geloverlay", {
 
 		self._isOpen = false;
 
-		this.uiGeloverlay.gelmodal({autoOpen:false});
+		this.uiGeloverlay.gelmodal({autoOpen:false, position:this.options.position});
 		if ( this.options.autoOpen ) this.open();
 	},
 

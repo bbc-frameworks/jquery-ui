@@ -59,10 +59,6 @@ $.widget("ui.gelmodal", {
 	widget: function() {
 		return this._overlay;
 	},
-	destroy: function() {
-		this._overlay.remove();
-		$.ui.widget.prototype.destroy.call(this);
-	},
 	
 	/**
 	 * This method should be called whenever the dom inside the overlay is updated.
