@@ -27,18 +27,15 @@ var uiGeloverlayClasses =
 
 $.widget("ui.geloverlay", {
 	options: {
-		autoOpen: true,
+		autoOpen: false,
 		closeText: 'close',
 		geloverlayClass: '',
 		hide: null,
 		height: 'auto',
-		maxHeight: false,
-		maxWidth: false,
 		minHeight: 150,
 		minWidth: 150,
 		show: null,
 		stack: true,
-		title: '',
 		width: 300,
 		zIndex: 1000
 	},
@@ -47,7 +44,7 @@ $.widget("ui.geloverlay", {
 
 		var self = this,
 			options = self.options,
-
+			
 			uiGeloverlay = (self.uiGeloverlay = $('<div></div>'))
 				.appendTo(document.body)
 				.hide()
@@ -100,18 +97,9 @@ $.widget("ui.geloverlay", {
 				.text(options.closeText)
 				.appendTo(uiGeloverlayClose);
 
-		//handling of deprecated beforeclose (vs beforeClose) option
-		//Ticket #4669 http://dev.jqueryui.com/ticket/4669
-		//TODO: remove in 1.9pre
-		if ($.isFunction(options.beforeclose) && !$.isFunction(options.beforeClose)) {
-			options.beforeClose = options.beforeclose;
-		}
-
 		self._isOpen = false;
 
-		if ($.fn.bgiframe) {
-			uiGeloverlay.bgiframe();
-		}
+		this.uiGeloverlay.gelmodal({autoOpen:false});
 		if ( this.options.autoOpen ) this.open();
 	},
 
@@ -183,9 +171,8 @@ $.widget("ui.geloverlay", {
 		}
 		self._size();
 		uiGeloverlay.show(options.show);
-		this.uiGeloverlay.gelmodal({autoOpen:true});
 
-		
+		this.uiGeloverlay.gelmodal('open');
 		self._isOpen = true;
 		self._trigger('open');
 
@@ -237,20 +224,7 @@ $.widget("ui.geloverlay", {
 });
 
 $.extend($.ui.geloverlay, {
-	version: "1.8.5",
-
-	uuid: 0,
-	maxZ: 0,
-
-	getTitleId: function($el) {
-		var id = $el.attr('id');
-		if (!id) {
-			this.uuid += 1;
-			id = this.uuid;
-		}
-		return 'ui-geloverlay-title-' + id;
-	}
-
+	version: "1.8.5"
 });
 
 
