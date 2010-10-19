@@ -16,12 +16,8 @@
 	<script type="text/javascript" src="../../../ui/jquery.ui.geloverlay.js"></script>
 	<script type="text/javascript">
 	$(function() {
-		$("#dialog").geloverlay({
-			autoOpen: false
-		});
-		$("#dialog2").geloverlay({
-            autoOpen: false
-        });
+		$("#dialog").geloverlay();
+		$("#dialog2").geloverlay();
 		$('#opener').click(function() {
 			$('#dialog').geloverlay('open');
 		});
@@ -36,12 +32,6 @@
 </head>
 <body class="dark">
 
-<button id="opener">open dialog</button>
-<div id="dialog" title="Dialog Title">
-	<p> Dialog Content </p>
-	<a id="another" href="#">Open another :-o</a>
-	<!-- <input type="text"> --> 
-</div>
 
 <div id="dialog2" title="Dialog Title">
     <p> Dialog Content 2</p>
@@ -121,6 +111,12 @@
 	<option value="h">option</option>
 	<option value="i">option</option>
 </select>
+</div>
+<button id="opener">open dialog</button>
+<div id="dialog" title="Dialog Title">
+	<p> Dialog Content </p>
+	<a id="another" href="#">Open another :-o</a>
+	<!-- <input type="text"> --> 
 </div>
 
 <div>

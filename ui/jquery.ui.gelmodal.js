@@ -44,7 +44,7 @@ $.widget("ui.gelmodal", {
 	open: function(event) {
 	    if ( false === this._trigger('beforeopen', event) ) return;
 		this.element.show();
-		this._overlay.show();
+		this._overlay.gelscreenmask('open');
 		this._windowResize();
 		this._lockFocus(this.element);
 	    this._trigger('open', event);
@@ -53,7 +53,7 @@ $.widget("ui.gelmodal", {
 	    if ( false === this._trigger('beforeclose', event) ) return;
 		this._unlockFocus(this.element);
 		this.element.hide();
-		this._overlay.hide();
+		this._overlay.gelscreenmask('close');
 	    this._trigger('close', event);
 	},
 	widget: function() {
@@ -82,23 +82,7 @@ $.widget("ui.gelmodal", {
 	 * is more straightforward to refactor and override
 	 */
 	_makeOverlay: function() {
-		this._overlay = $('<div></div>')
-			.gelscreenmask()
-			.appendTo(document.body)
-			.css({
-				zIndex: this._zIndex - 1,
-				position: 'absolute',
-				width: this._overlayWidth(),
-				height: this._overlayHeight(),
-				top: '0px',
-				left: '0px',
-				backgroundColor: '#000000',
-				opacity: 0.5
-			})
-			.hide();
-		if ($.fn.bgiframe) {
-			this._overlay.bgiframe();
-		}
+		this._overlay = this.element.gelscreenmask();
 		return this._overlay;
 	},
 	_destroyOverlay: function() {
@@ -289,62 +273,10 @@ $.widget("ui.gelmodal", {
 	
 	
 	_windowResize: function() {
-		this._overlay.height(0).width(0);
-		this._overlay.height(this._overlayHeight());
-		this._overlay.width(this._overlayWidth());
 		this._position(this.options.position);
 	},
 	_windowResizeEvent: function(event) {
 		event.data.modal._windowResize();
-	},
-	_overlayHeight: function() {
-		var scrollHeight,
-			offsetHeight;
-		// handle IE 6
-		if ($.browser.msie && $.browser.version < 7) {
-			scrollHeight = Math.max(
-				document.documentElement.scrollHeight,
-				document.body.scrollHeight
-			);
-			offsetHeight = Math.max(
-				document.documentElement.offsetHeight,
-				document.body.offsetHeight
-			);
-
-			if (scrollHeight < offsetHeight) {
-				return $(window).height() + 'px';
-			} else {
-				return scrollHeight + 'px';
-			}
-		// handle "good" browsers
-		} else {
-			return $(document).height() + 'px';
-		}
-	},
-
-	_overlayWidth: function() {
-		var scrollWidth,
-			offsetWidth;
-		// handle IE 6
-		if ($.browser.msie && $.browser.version < 7) {
-			scrollWidth = Math.max(
-				document.documentElement.scrollWidth,
-				document.body.scrollWidth
-			);
-			offsetWidth = Math.max(
-				document.documentElement.offsetWidth,
-				document.body.offsetWidth
-			);
-
-			if (scrollWidth < offsetWidth) {
-				return $(window).width() + 'px';
-			} else {
-				return scrollWidth + 'px';
-			}
-		// handle "good" browsers
-		} else {
-			return $(document).width() + 'px';
-		}
 	},
 	
 	_position: function(position) {
@@ -363,7 +295,7 @@ $.widget("ui.gelmodal", {
 
 
 
-var overlayClasses = 'ui-widget-overlay';
+var overlayClasses = 'ui-widget-gelscreenmask';
 
 // TODO add callback triggers
 $.widget( 'ui.gelscreenmask', {
@@ -386,12 +318,10 @@ $.widget( 'ui.gelscreenmask', {
 		// keep a track of zIndexes
 		$.ui.gelscreenmask.zIndex += this.options.zDiff;
 		this.zIndex = $.ui.gelscreenmask.zIndex;
-		// Reuse the same mask each time by storing it statically
-		$.ui.gelscreenmask.html = $.ui.gelscreenmask.html || $('<div></div>').addClass(overlayClasses).css('z-index', this.zIndex);
 		// IE 6 specific, use an iframe instead of hiding elements
 		if ($.fn.bgiframe && $.browser.msie && $.browser.version < 7) {
 			this.options.hideUnmaskables = false;
-			$.ui.gelscreenmask.html.bgiframe();
+			this.widget().bgiframe();
 		}
 	},
 
@@ -427,6 +357,8 @@ $.widget( 'ui.gelscreenmask', {
 	},
 
 	widget: function() {
+		// Reuse the same mask each time by storing it statically
+		if ( !$.ui.gelscreenmask.html ) $.ui.gelscreenmask.html = $('<div></div>').addClass(overlayClasses).css('z-index', this.zIndex);
 		return $.ui.gelscreenmask.html;
 	},
 
@@ -435,13 +367,13 @@ $.widget( 'ui.gelscreenmask', {
 		var that = this;
 		// only ever add one mask otherwise update the z-index of the first placed one
 		if (maskStack.length === 0) {
-			$(document.body).append($.ui.gelscreenmask.html);
+			$(document.body).append(this.widget());
 			$(window).bind('resize.gelscreenmask', function() {
 				that._resizeMask();
 			});
 		} else {
 			// update the zIndex of the mask
-			$.ui.gelscreenmask.html.css('z-index', this.zIndex);
+			this.widget().css('z-index', this.zIndex);
 		}
 		maskStack.push(this.zIndex);
 		// size the mask
@@ -453,14 +385,14 @@ $.widget( 'ui.gelscreenmask', {
 		maskStack.pop();
 		if (maskStack.length == 0) {
 			// if it's the last mask simply hide it
-			$.ui.gelscreenmask.html.remove();
+			this.widget().remove();
 		} else {
-			$.ui.gelscreenmask.html.css('z-index', maskStack[maskStack.length-1]);
+			this.widget().css('z-index', maskStack[maskStack.length-1]);
 		}
 	},
 
 	_resizeMask: function() {
-		$.ui.gelscreenmask.html.css({'width': $(document).width(), 'height': $(document).height()})
+		this.widget().css({'width': $(document).width(), 'height': $(document).height()});
 	},
 
 	_hideUnMaskables: function() {
@@ -490,7 +422,7 @@ $.extend($.ui.gelscreenmask, {
 	hideUnderlayElementsOf: function(el) {
 		$.ui.gelscreenmask.undoHiddenElements();
 		var unMaskables = ['object', 'embed'],
-			toHide = $.map(unMaskables, function(v) { return v+':visible' }).join(', '),
+			toHide = $.map(unMaskables, function(v) { return v+':visible'; }).join(', '),
 			toKeep = el.find(unMaskables.join(', '));
 		this.undoBuffer =  $(toHide).not(toKeep).css('visibility', 'hidden');
 	},
