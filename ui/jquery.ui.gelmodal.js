@@ -306,16 +306,18 @@ $.widget( 'ui.gelscreenmask', {
 	mask: null,
 	zIndex: 0,
 	previousZIndex: null,
+	previousDisplay: null,
 
 	_create: function() {
 		if (this.options.zDiff < 0) throw new Error('zIndex must be a positive number.');
 		// hide the element early
+		this.previousDisplay = this.element.css('display');
 		if (this.options.hideElement) this.element.css('display', 'none');
 		// keep a track of zIndexes
 		$.ui.gelscreenmask.zIndex += this.options.zDiff;
 		this.zIndex = $.ui.gelscreenmask.zIndex;
 		// IE 6 specific, use an iframe instead of hiding elements
-		if ($.fn.bgiframe && $.browser.msie && $.browser.version < 7) {
+		if ($.fn.bgiframe) {
 			this.options.hideUnmaskables = false;
 			this.widget().bgiframe();
 		}

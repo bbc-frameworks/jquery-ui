@@ -82,7 +82,6 @@ test("close", function() {
 	equals(actual, expected, 'close is chainable');
 	
 	el = $('<div class="test"></div>').geloverlay({autoOpen:true});
-	console.log(dlg().css('display'));
 	ok(dlg().is(':visible') && !dlg().is(':hidden'), 'geloverlay visible before close method called');
 	el.geloverlay('close');
 	ok(dlg().is(':hidden') && !dlg().is(':visible'), 'geloverlay hidden after close method called');

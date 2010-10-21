@@ -105,18 +105,16 @@ $.widget("ui.geloverlay", {
 	},
 
 	destroy: function() {
-		var self = this;
-		
-		self.uiGeloverlay.gelmodal('destroy');
-		self.uiGeloverlay.hide();
-		self.element
+		this.uiGeloverlay.gelmodal('destroy');
+		this.uiGeloverlay.hide();
+		this.element
 			.unbind('.geloverlay')
 			.removeData('geloverlay')
 			.removeClass('ui-geloverlay-content ui-widget-content')
 			.hide().appendTo('body');
-		self.uiGeloverlay.remove();
+		this.uiGeloverlay.remove();
 		
-		return self;
+		return this;
 	},
 
 	widget: function() {
@@ -155,6 +153,24 @@ $.widget("ui.geloverlay", {
 		return self;
 	},
 
+	_setOption: function(key, value){
+		var resize = false;
+		switch (key) {
+			case 'closeText' :
+				this.uiGeloverlayCloseText.text("" + value);
+				break;
+			case 'height' :
+			case 'width' :
+			case 'minHeight' :
+			case 'minWidth' :
+				this.options[key] = value;
+				resize = true;
+				break;
+		}
+		if ( resize ) this._size();
+		$.Widget.prototype._setOption.apply(this, arguments);
+	},
+
 	isOpen: function() {
 		return this._isOpen;
 	},
@@ -170,13 +186,15 @@ $.widget("ui.geloverlay", {
 		if (uiGeloverlay.next().length) {
 			uiGeloverlay.appendTo('body');
 		}
-		self._size();
+		
 		uiGeloverlay.show(options.show);
-
+		
+		self._size();
+		
 		this.uiGeloverlay.gelmodal('open');
 		self._isOpen = true;
 		self._trigger('open');
-
+		
 		return self;
 	},
 
@@ -206,7 +224,6 @@ $.widget("ui.geloverlay", {
 				width: options.width
 			})
 			.height();
-
 		this.element
 			.css(options.height === 'auto' ? {
 					minHeight: Math.max(options.minHeight - nonContentHeight, 0),

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>jQuery Screen Gel Mask Test Suite</title>
+
+	<script type="text/javascript" src="../../../jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.widget.js"></script>
+
+	<script type="text/javascript" src="../../../ui/jquery.ui.gelcore.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.gelmodal.js"></script>
+
+	<link rel="stylesheet" href="../../../external/qunit.css" type="text/css"/>
+	<script type="text/javascript" src="../../../external/qunit.js"></script>
+
+	<script type="text/javascript" src="../../jquery.simulate.js"></script>
+	<script type="text/javascript" src="../testsuite.js"></script>
+	<script type="text/javascript" src="gelscreenmask_core.js"></script>
+
+	<script type="text/javascript" src="../swarminject.js"></script>
+	<style type="text/css">
+    body {
+        font-family: arial;
+    }
+    .box { 
+        position: absolute;
+        font-size: 2em;
+        color: black;
+        width: 320px;
+        height: 240px;
+        display: none;
+        border: 3px solid black;
+        background: white;
+        padding: 8px;
+    }
+    .box .top {
+        position: relative;
+    }
+    .box a.close {
+        border: 1px solid #e7e7e7;
+        padding: 5px;
+        font-size: 0.7em;
+        text-decoration: none;
+        position: absolute;
+        right: 0px;
+    }
+    .box a.close:hover {
+        background: red;
+    }
+    .box-1 {
+        top: 35%;
+        left: 2%;
+        z-index: 1;
+    }
+    .box-2 {
+        top: 35%;
+        left: 10%;
+        z-index: -10;
+    }
+    .box-3 {
+        top: 35%;
+        left: 18%;
+        height: 3240px;
+    }
+	</style>
+</head>
+<body>
+
+<h1 id="qunit-header">jQuery UI Mask Test Suite</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+
+    <div>
+       <input type="button" id="opener" value="OPEN A MASKED BOX" />
+    </div>
+
+    <p class="text">Lorem ipsum dolor sit amet..</p>
+
+    <div id="bob" style="display: none">
+        <object id="_bob" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100" height="100" id="flash" align="middle">
+            <param name="allowScriptAccess" value="sameDomain">
+            <param name="movie" value="../../data/flash.swf">
+            <param name="quality" value="high">
+            <param name="bgcolor" value="#FFFFFF">
+            <embed src="../../data/flash.swf" quality="high" bgcolor="#FFFFFF" width="100" height="100" name="flash" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">
+    </object>
+    </div>
+
+    <object id="main" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100" height="100" id="flash" align="middle">
+        <param name="allowScriptAccess" value="sameDomain">
+        <param name="movie" value="../../data/flash.swf">
+        <param name="quality" value="high">
+        <param name="bgcolor" value="#FFFFFF">
+        <embed src="../../data/flash.swf" quality="high" bgcolor="#FFFFFF" width="100" height="100" name="flash" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">
+    </object>
+
+    <select name="one">
+        <option>Opt 1</option>
+        <option>Opt 2</option>
+    </select>
+
+    <div class="box box-1">
+       <div class="top"><span class="panel-title">Text at the top</span><span><a href="#" class="close">X</a></span></div>
+       <input type="button" class="open" value="OPEN ANOTHER MASKED BOX" />
+        <select name="one">
+            <option>Opt 1</option>
+            <option>Opt 2</option>
+        </select>
+        <object id="_1" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100" height="100" id="flash" align="middle">
+            <param name="allowScriptAccess" value="sameDomain">
+            <param name="movie" value="../../data/flash.swf">
+            <param name="quality" value="high">
+            <param name="bgcolor" value="#FFFFFF">
+            <embed src="../../data/flash.swf" quality="high" bgcolor="#FFFFFF" width="100" height="100" name="flash" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">
+        </object>
+    </div>
+
+    <div class="box box-2">
+        <div class="top"><span class="panel-title">Text at the top</span><span><a href="#" class="close">X</a></span></div>
+        <input type="button" class="open" value="OPEN ANOTHER MASKED BOX" />
+        <select name="one">
+            <option>Opt 1</option>
+            <option>Opt 2</option>
+        </select>
+        <object id="_2" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100" height="100" id="flash" align="middle">
+            <param name="allowScriptAccess" value="sameDomain">
+            <param name="movie" value="../../data/flash.swf">
+            <param name="quality" value="high">
+            <param name="bgcolor" value="#FFFFFF">
+            <embed src="../../data/flash.swf" quality="high" bgcolor="#FFFFFF" width="100" height="100" name="flash" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">
+        </object>
+    </div>
+
+    <div class="box box-3">
+        <div class="top"><span class="panel-title">Text at the top</span><span><a href="#" class="close">X</a></span></div>
+        <select name="one">
+            <option>Opt 1</option>
+            <option>Opt 2</option>
+        </select>
+        <object id="_3" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100" height="100" id="flash" align="middle">
+            <param name="allowScriptAccess" value="sameDomain">
+            <param name="movie" value="../../data/flash.swf">
+            <param name="quality" value="high">
+            <param name="bgcolor" value="#FFFFFF">
+            <embed src="../../data/flash.swf" quality="high" bgcolor="#FFFFFF" width="100" height="100" name="flash" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">
+        </object>
+    </div>
+    
+</body>
+</html>
