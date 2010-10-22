@@ -54,7 +54,7 @@ test("closeText", function() {
 });
 
 test("geloverlayClass", function() {
-	expect(4);
+	expect(5);
 
 	el = $('<div></div>').geloverlay();
 		equals(dlg().is(".foo"), false, 'geloverlayClass not specified. foo class added');
@@ -67,6 +67,10 @@ test("geloverlayClass", function() {
 	el = $('<div></div>').geloverlay({ geloverlayClass: "foo bar" });
 		equals(dlg().is(".foo"), true, 'geloverlayClass in init, two classes. foo class added');
 		equals(dlg().is(".bar"), true, 'geloverlayClass in init, two classes. bar class added');
+	
+	el = $('<div></div>').geloverlay();
+		el.geloverlay('option', 'geloverlayClass', 'baz');
+		equals(dlg().is(".baz"), true, 'geloverlayClass via option method');
 	el.remove();
 });
 

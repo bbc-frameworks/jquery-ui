@@ -153,16 +153,25 @@ $.widget("ui.geloverlay", {
 		return self;
 	},
 
+	/*
+	 * _setOption is overridden to allow for any "live" changes that
+	 * are required.
+	 */
 	_setOption: function(key, value){
 		var resize = false;
 		switch (key) {
 			case 'closeText' :
 				this.uiGeloverlayCloseText.text("" + value);
 				break;
+			case 'geloverlayClass' :
+				this.uiGeloverlay.removeClass(this.options.geloverlayClass);
+				this.uiGeloverlay.addClass(value);
+				break;
 			case 'height' :
 			case 'width' :
 			case 'minHeight' :
 			case 'minWidth' :
+			case 'position' :
 				this.options[key] = value;
 				resize = true;
 				break;
