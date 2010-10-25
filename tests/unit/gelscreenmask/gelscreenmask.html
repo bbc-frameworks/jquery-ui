@@ -3,13 +3,13 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>jQuery Screen Gel Mask Test Suite</title>
-
+	<link rel="stylesheet" href="../../../themes/gel/jquery.ui.all.css" type="text/css" title="ui-theme" />
 	<script type="text/javascript" src="../../../jquery-1.4.2.js"></script>
 	<script type="text/javascript" src="../../../ui/jquery.ui.core.js"></script>
 	<script type="text/javascript" src="../../../ui/jquery.ui.widget.js"></script>
 
 	<script type="text/javascript" src="../../../ui/jquery.ui.gelcore.js"></script>
-	<script type="text/javascript" src="../../../ui/jquery.ui.gelmodal.js"></script>
+	<script type="text/javascript" src="../../../ui/jquery.ui.gelscreenmask.js"></script>
 
 	<link rel="stylesheet" href="../../../external/qunit.css" type="text/css"/>
 	<script type="text/javascript" src="../../../external/qunit.js"></script>
@@ -19,7 +19,7 @@
 	<script type="text/javascript" src="gelscreenmask_core.js"></script>
 
 	<script type="text/javascript" src="../swarminject.js"></script>
-	<style type="text/css">
+    <style type="text/css">
     body {
         font-family: arial;
     }
@@ -63,7 +63,7 @@
         left: 18%;
         height: 3240px;
     }
-	</style>
+    </style>
 </head>
 <body>
 
@@ -79,7 +79,7 @@
     <p class="text">Lorem ipsum dolor sit amet..</p>
 
     <div id="bob" style="display: none">
-        <object id="_bob" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100" height="100" id="flash" align="middle">
+        <object id="below-all-1" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100" height="100" id="flash" align="middle">
             <param name="allowScriptAccess" value="sameDomain">
             <param name="movie" value="../../data/flash.swf">
             <param name="quality" value="high">
@@ -88,7 +88,7 @@
     </object>
     </div>
 
-    <object id="main" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100" height="100" id="flash" align="middle">
+    <object id="below-all-2" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="100" height="100" id="flash" align="middle">
         <param name="allowScriptAccess" value="sameDomain">
         <param name="movie" value="../../data/flash.swf">
         <param name="quality" value="high">
