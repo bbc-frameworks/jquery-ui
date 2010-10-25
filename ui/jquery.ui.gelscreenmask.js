@@ -151,15 +151,15 @@ $.extend($.ui.gelscreenmask, {
 	
 	/**
 	 * lock focus to a specific dom element
+	 * 
+	 * @TODO "remember" previously focused item when traversing multi-modal stacks
 	 */
 	_lockFocus: function($el, ignoreStack) {
 		var stackLength = this.lockStack.length,
 			focusables = this._sortedFocusables($el);
-			console.log(focusables.length);
 		if ( !ignoreStack && stackLength > 0 ) this._unlockFocus(this.lockStack[stackLength-1], true);
 		if ( focusables[0] ) {
 			focusables[0].focus();
-			console.log(focusables[0]);
 		}
 		
 		this._trackFocusedElement( $el, this);
