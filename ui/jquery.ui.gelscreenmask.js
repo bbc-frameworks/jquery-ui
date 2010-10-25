@@ -55,6 +55,7 @@ $.widget( 'ui.gelscreenmask', {
 			'zIndex': this.zIndex + 1, 
 			'display': 'block'
 		});
+		$.ui.gelscreenmask._lockFocus(this.element);
 		this._addMask();
 	},
 
@@ -65,6 +66,7 @@ $.widget( 'ui.gelscreenmask', {
 			'zIndex':  this.previousZIndex, 
 			'display': this.previousDisplay
 		});
+		$.ui.gelscreenmask._unlockFocus(this.element);
 		//this._resizeMask(); //TODO fails in IE currently, figure out why
 	},
 
@@ -81,11 +83,6 @@ $.widget( 'ui.gelscreenmask', {
 		return self;
 	},
 	
-	widget: function() {
-		// Reuse the same mask each time by storing it statically
-		if ( !$.ui.gelscreenmask.html ) $.ui.gelscreenmask.html = $('<div></div>').addClass(overlayClasses);
-		return $.ui.gelscreenmask.html;
-	},
 
 	widget: function() {
 		return $.ui.gelscreenmask.html;
@@ -148,6 +145,180 @@ $.extend($.ui.gelscreenmask, {
 	maskStack: [],
 	zIndex: 0,
 	html: null,
+	lockStack: [],
+
+	
+	
+	/**
+	 * lock focus to a specific dom element
+	 */
+	_lockFocus: function($el, ignoreStack) {
+		var stackLength = this.lockStack.length,
+			focusables = this._sortedFocusables($el);
+		if ( !ignoreStack && stackLength > 0 ) this._unlockFocus(this.lockStack[stackLength-1], true);
+		focusables[0].focus();
+		this._trackFocusedElement( $el, this);
+		this._trackShiftKey( focusables, this);
+		this._captureTabOutOfEdgeElements( $el );
+		$(document).bind('focusin', {el: $el, modal:this, focusables:focusables}, this._lockFocusEvent);
+		if ( !ignoreStack ) this.lockStack.push($el);
+		return $el;
+	},
+	/**
+	 * event for _lockFocus, separated for safe unbinding
+	 */
+	_lockFocusEvent: function(event) {
+		var focused = event.originalTarget || event.srcElement,
+			focusables = event.data.focusables,
+			modal = event.data.modal,
+			previous = modal._focusedElement,
+			backwards = modal._shiftKey,
+			$el = event.data.el;
+		if ( focused !== $(document)[0] && focusables.index(focused) === -1 ) {
+			modal._nextItemByTabIndex(focusables, previous, backwards).focus();
+		}
+	},
+	/**
+	 * unlock focus from a specific dom element
+	 */
+	_unlockFocus: function($el, ignoreStack) {
+		var focusables = this._sortedFocusables($el);
+		this._untrackFocusedElement($el);
+		this._untrackShiftKey(focusables);
+		this._unCaptureTabOutOfEdgeElements( $el );
+		$(document).unbind('focusin', this._lockFocusEvent);
+		$el.unbind('keypress', this._closeOnEscapeEvent);
+		$(document).unbind('resize', this._windowResizeEvent);
+		if ( !ignoreStack ) {
+			this.lockStack.pop();
+			var stackLength = this.lockStack.length;
+			if ( stackLength > 0 ) {
+				this._lockFocus(this.lockStack[stackLength-1], true);
+			}
+		}
+		return $el;
+	},
+	
+	/**
+	 * given a tabindex-sorted list of dom elements,
+	 * the previously focused element, and the direction go to the
+	 * next element.  Loops forward or backward as required.
+	 */
+	_nextItemByTabIndex: function($list, previous, backwards) {
+		var index = $list.index(previous),
+			oldIndex = index;
+		if ( !backwards ) {
+			index = ( index>-1 && index<$list.size()-1 ) ? index+1 : 0;
+		} else {
+			index = ( index>0 ) ? index-1 : $list.size()-1;
+		}
+		return $list[index];
+	},
+	
+	/**
+	 * state value for the last focused element
+	 */
+	_focusedElement: null,
+	/**
+	 * track focused element
+	 */
+	_trackFocusedElement: function($list, store) {
+		return $list.bind('focusin', {store:store}, this._trackFocusedElementEvent);
+	},
+	/**
+	 * event to track focused element
+	 */
+	_trackFocusedElementEvent: function(event) {
+		event.data.store._focusedElement = event.originalTarget || event.srcElement;
+	},
+	/**
+	 * stop tracking focused element
+	 */
+	_untrackFocusedElement: function($list) {
+		return $list.unbind('focusin', this._trackFocusedElementEvent);
+	},
+	
+	/**
+	 * state value for shift key on tabbing
+	 */
+	_shiftKey: false,
+	/**
+	 * track the use of the shift key when tabbing
+	 */
+	_trackShiftKey: function($focusables, store) {
+		return $focusables.bind('keydown', {store:store}, this._trackShiftKeyEvent);
+	},
+	/**
+	 * event for tracking the use of the shift key, separated for safe unbinding
+	 */
+	_trackShiftKeyEvent: function(event) {
+		if ( event.keyCode !== $.ui.keyCode.TAB ) return;
+		event.data.store._shiftKey = event.shiftKey;
+	},
+	/**
+	 * stop tracking the use of the shift key when tabbing
+	 */
+	_untrackShiftKey: function($focusables) {
+		return $focusables.unbind('keydown', this._trackShiftKeyEvent);
+	},
+	
+	
+	/**
+	 * Capture tabbing from the "edge" elements (in dom order)
+	 * so that we can avoid jumping out to the browser's chrome
+	 * @fixme - "keydown" does not capture repeats when holding the key down
+	 */
+	_captureTabOutOfEdgeElements: function($el) {
+		var focusables = $(':tabbable', $el),
+			last = focusables.last(),
+			first = focusables.filter('input,select,textarea').first();
+		last.bind('keydown', {modal:this, el:$el, focusables:focusables, forwards:true}, this._captureTabOutOfEdgeElementsEvent);
+		first.bind('keydown', {modal:this, el:$el, focusables:focusables, forwards:false}, this._captureTabOutOfEdgeElementsEvent);
+	},
+	/**
+	 * Event to capture tabbing from the "edge" elements
+	 */
+	_captureTabOutOfEdgeElementsEvent: function(event) {
+		var forwards = event.data.forwards;
+		if ( event.keyCode !== $.ui.keyCode.TAB || (event.shiftKey==forwards) ) return true;
+		var focusables = event.data.focusables,
+			modal = event.data.modal,
+			$el = event.data.el,
+			sortedFocusables = modal._sortedFocusables($el);
+		modal._nextItemByTabIndex(sortedFocusables, this, !forwards).focus();
+		return false;
+	},
+	/**
+	 * Stop capturing tabbing from the "edge" elements
+	 */
+	_unCaptureTabOutOfEdgeElements: function($el) {
+		var focusables = $(':tabbable', $el),
+			last = focusables.last(),
+			first = focusables.filter('input,select,textarea').first();
+		last.unbind('keydown', this._captureTabOutOfLastElementEvent);
+		first.unbind('keydown', this._captureTabOutOfLastElementEvent);
+	},
+	
+	/**
+	 * utility method to sort an elements focusable children by tabIndex.
+	 * note that since ECMAScript does not guarantee stability in .sort()
+	 * comparison functions, we actually enforce this to mimic tabindex
+	 * and then source-order style sorting.
+	 */
+	_sortedFocusables: function($el) {
+		var focusables = $(':focusable', $el),
+			originals = focusables.toArray();
+		return $(':focusable', $el).sort(function(a,b){
+			var a1 = parseInt(a.tabIndex||0,10),
+				b1 = parseInt(b.tabIndex||0,10);
+			if ( a1 == b1 ) {
+				var a2 = $.inArray(a, originals);
+				var b2 = $.inArray(b, originals);
+				return a2 - b2;
+			}
+			return a1 - b1;
+		});
+	},
 
 	hideUnderlayElementsOf: function(el) {
 		$.ui.gelscreenmask.undoHiddenElements();
