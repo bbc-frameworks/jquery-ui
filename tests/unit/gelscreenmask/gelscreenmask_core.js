@@ -122,9 +122,12 @@ test('zIndexes: with more than one dialog created, stack zIndexes properly', fun
 	equals( $('.box-3').css('zIndex'), 24, 'this element should have a z-index that is 1 higher than .ui-widget-gelscreenmask and static zIndex' );
 	equals( $.ui.gelscreenmask.zIndex, 23, 'static zIndex counter $.ui.gelscreenmask.zIndex should be the addition of 15+5+3' );
 
+		console.log('tests run');
 	mask1.gelscreenmask('destroy');
+		console.log('tests run 2');
 	mask2.gelscreenmask('destroy');
 	mask3.gelscreenmask('destroy');
+		console.log('tests run 3');
 });
 
 test('zIndexes: with more than one dialog created, \'open\' then \'close\' restores default zIndexes and leaves static zIndex untouched', function() {

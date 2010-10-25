@@ -156,7 +156,7 @@ $.extend($.ui.gelscreenmask, {
 		var stackLength = this.lockStack.length,
 			focusables = this._sortedFocusables($el);
 		if ( !ignoreStack && stackLength > 0 ) this._unlockFocus(this.lockStack[stackLength-1], true);
-		focusables[0].focus();
+		if ( focusables[0] ) focusables[0].focus();
 		this._trackFocusedElement( $el, this);
 		this._trackShiftKey( focusables, this);
 		this._captureTabOutOfEdgeElements( $el );
@@ -308,7 +308,7 @@ $.extend($.ui.gelscreenmask, {
 	_sortedFocusables: function($el) {
 		var focusables = $(':focusable', $el),
 			originals = focusables.toArray();
-		return $(':focusable', $el).sort(function(a,b){
+		return focusables.sort(function(a,b){
 			var a1 = parseInt(a.tabIndex||0,10),
 				b1 = parseInt(b.tabIndex||0,10);
 			if ( a1 == b1 ) {
