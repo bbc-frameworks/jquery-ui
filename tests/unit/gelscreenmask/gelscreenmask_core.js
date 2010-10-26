@@ -31,8 +31,8 @@ test('flash: test flash elements after open/close/destroy of one mask', function
 	var mask1 = $('.box-1').gelscreenmask();
 
 	//check the default are set up correctly
-	equals($('embed:hidden' ).length, 4, "this amount of flash object should not be visible");
-	equals($('embed:visible').length, 1, "this amount of flash object should be visible");
+	equals($('object:hidden' ).length, 4, "this amount of flash object should not be visible");
+	equals($('object:visible').length, 1, "this amount of flash object should be visible");
 	equals($('.box-1 object:visible').length, 0, ".box 1 flash element should not be visible");
 
 	mask1.gelscreenmask('open');
@@ -122,12 +122,9 @@ test('zIndexes: with more than one dialog created, stack zIndexes properly', fun
 	equals( $('.box-3').css('zIndex'), 24, 'this element should have a z-index that is 1 higher than .ui-widget-gelscreenmask and static zIndex' );
 	equals( $.ui.gelscreenmask.zIndex, 23, 'static zIndex counter $.ui.gelscreenmask.zIndex should be the addition of 15+5+3' );
 
-		console.log('tests run');
 	mask1.gelscreenmask('destroy');
-		console.log('tests run 2');
 	mask2.gelscreenmask('destroy');
 	mask3.gelscreenmask('destroy');
-		console.log('tests run 3');
 });
 
 test('zIndexes: with more than one dialog created, \'open\' then \'close\' restores default zIndexes and leaves static zIndex untouched', function() {
