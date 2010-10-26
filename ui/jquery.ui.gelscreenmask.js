@@ -159,6 +159,8 @@ $.extend($.ui.gelscreenmask, {
 
 	/**
 	 * lock focus to a specific dom element
+	 * 
+	 * @TODO "remember" previously focused item when traversing multi-modal stacks
 	 */
 	_lockFocus: function($el, ignoreStack) {
 		var stackLength = this.lockStack.length,
