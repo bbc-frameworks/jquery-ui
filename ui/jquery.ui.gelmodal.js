@@ -292,9 +292,6 @@ $.extend($.ui.gelmodal, {
 		var tabbables = $(':tabbable', $el),
 			last = tabbables.last(),
 			first = tabbables.first();
-		console.log('edge elements are:');
-		console.log(first);
-		console.log(last);
 		last.bind('keydown', {modal:this, el:$el, tabbables:tabbables, forwards:true}, this._captureTabOutOfEdgeElementsEvent);
 		first.bind('keydown', {modal:this, el:$el, tabbables:tabbables, forwards:false}, this._captureTabOutOfEdgeElementsEvent);
 	},
