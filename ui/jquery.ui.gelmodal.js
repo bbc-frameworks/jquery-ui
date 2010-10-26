@@ -164,7 +164,7 @@ $.extend($.ui.gelmodal, {
 	 */
 	_lockFocus: function($el, ignoreStack) {
 		var stackLength = this.lockStack.length,
-			tabbables = this._sortedTabbables($el, '.ui-geloverlay-close');
+			tabbables = this._sortedTabbables($el);
 		if ( !ignoreStack && stackLength > 0 ) this._unlockFocus(this.lockStack[stackLength-1], true);
 		if ( tabbables[0] ) {
 			try { tabbables[0].focus(); } catch(e) {}
@@ -329,7 +329,7 @@ $.extend($.ui.gelmodal, {
 	 * 
 	 * @TODO sort out -1 z-indexes
 	 */
-	_sortedTabbables: function($el, specialClass) {
+	_sortedTabbables: function($el) {
 		var tabbables = $(':tabbable', $el),
 			originals = tabbables.get();
 		tabbables = tabbables.sort(function(a,b){
