@@ -65,8 +65,8 @@ $(function() {
     $.each([1,2,3], function() {
         var i = Number(this), panel = $('.box-'+i);
         masks[i] = panel.gelmodal();
-        panel.find('.open' ).bind('click', function() { masks[i+1].gelmodal('open' ); }).end()
-             .find('.close').bind('click', function() { masks[i  ].gelmodal('close'); });
+        panel.find('.open' ).bind('click', function() { masks[i+1].gelmodal('open' ); return false }).end()
+             .find('.close').bind('click', function() { masks[i  ].gelmodal('close'); return false });
     });
     $('#opener').bind('click', function() { masks[1].gelmodal('open'); });
 });
@@ -108,7 +108,7 @@ $(function() {
     </select>
 
     <div class="box box-1">
-       <div class="top"><span class="panel-title">Text at the top</span><span><a href="#" class="close" id="a1">X</a></span></div>
+       <div class="top"><span class="panel-title">Text at the top</span><span><a href="#" class="close ui-geloverlay-close" id="a1" tabindex="0">X</a></span></div>
        <input id="input-5" />
        <input id="input-6" />
        <input id="input-7" />
@@ -132,7 +132,7 @@ $(function() {
     </div>
 
     <div class="box box-2">
-        <div class="top"><span class="panel-title">Text at the top</span><span><a href="#" class="close">X</a></span></div>
+        <div class="top"><span class="panel-title">Text at the top</span><span><a href="#" class="close ui-geloverlay-close" tabindex="0">X</a></span></div>
         <input type="button" class="open" value="OPEN ANOTHER MASKED BOX" />
        <input id="input-13" />
        <input id="input-14" />
@@ -160,11 +160,11 @@ $(function() {
     </div>
 
     <div class="box box-3">
-        <div class="top"><span class="panel-title">Text at the top</span><span><a href="#" class="close">X</a></span></div>
-       <input id="input-" />
-       <input id="input-" />
-       <input id="input-" />
-       <input id="input-" />
+        <div class="top"><span class="panel-title">Text at the top</span><span><a href="#" class="close ui-geloverlay-close" tabindex="0">X</a></span></div>
+       <input id="input-25" />
+       <input id="input-26" />
+       <input id="input-27" />
+       <input id="input-28" />
         <select name="one">
             <option>Opt 1</option>
             <option>Opt 2</option>
@@ -176,6 +176,7 @@ $(function() {
             <param name="bgcolor" value="#FFFFFF">
             <embed src="../../data/flash.swf" quality="high" bgcolor="#FFFFFF" width="100" height="100" name="flash" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">
         </object>
+       <input id="input-29" />
     </div>
 
 </body>

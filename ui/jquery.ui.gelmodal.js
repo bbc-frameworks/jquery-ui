@@ -54,8 +54,8 @@ $.widget( 'ui.gelmodal', {
 			'zIndex': this.zIndex + 1, 
 			'display': 'block'
 		});
-		$.ui.gelmodal._lockFocus(this.element);
 		this._addMask();
+		$.ui.gelmodal._lockFocus(this.element);
 	},
 
 	close: function() {
@@ -164,16 +164,15 @@ $.extend($.ui.gelmodal, {
 	 */
 	_lockFocus: function($el, ignoreStack) {
 		var stackLength = this.lockStack.length,
-			focusables = this._sortedFocusables($el);
+			tabbables = this._sortedTabbables($el, '.ui-geloverlay-close');
 		if ( !ignoreStack && stackLength > 0 ) this._unlockFocus(this.lockStack[stackLength-1], true);
-		if ( focusables[0] ) {
-			focusables[0].focus();
+		if ( tabbables[0] ) {
+			try { tabbables[0].focus(); } catch(e) {}
 		}
-		
 		this._trackFocusedElement( $el, this);
-		this._trackShiftKey( focusables, this);
+		this._trackShiftKey( tabbables, this);
 		this._captureTabOutOfEdgeElements( $el );
-		$(document).bind('focusin', {el: $el, modal:this, focusables:focusables}, this._lockFocusEvent);
+		$(document).bind('focusin', {el: $el, modal:this, tabbables:tabbables}, this._lockFocusEvent);
 		if ( !ignoreStack ) this.lockStack.push($el);
 		return $el;
 	},
@@ -183,13 +182,15 @@ $.extend($.ui.gelmodal, {
 	 */
 	_lockFocusEvent: function(event) {
 		var focused = event.originalTarget || event.srcElement,
-			focusables = event.data.focusables,
+			tabbables = event.data.tabbables,
 			modal = event.data.modal,
 			previous = modal._focusedElement,
 			backwards = modal._shiftKey,
 			$el = event.data.el;
-		if ( focused !== $(document)[0] && focusables.index(focused) === -1 ) {
-			modal._nextItemByTabIndex(focusables, previous, backwards).focus();
+		if ( focused !== $(document)[0] && tabbables.index(focused) === -1 ) {
+			try {
+				modal._nextItemByTabIndex(tabbables, previous, backwards).focus();
+			} catch(e) {}
 		}
 	},
 
@@ -197,9 +198,9 @@ $.extend($.ui.gelmodal, {
 	 * unlock focus from a specific dom element
 	 */
 	_unlockFocus: function($el, ignoreStack) {
-		var focusables = this._sortedFocusables($el);
+		var tabbables = this._sortedTabbables($el);
 		this._untrackFocusedElement($el);
-		this._untrackShiftKey(focusables);
+		this._untrackShiftKey(tabbables);
 		this._unCaptureTabOutOfEdgeElements( $el );
 		$(document).unbind('focusin', this._lockFocusEvent);
 		$el.unbind('keypress', this._closeOnEscapeEvent);
@@ -263,8 +264,8 @@ $.extend($.ui.gelmodal, {
 	/**
 	 * track the use of the shift key when tabbing
 	 */
-	_trackShiftKey: function($focusables, store) {
-		return $focusables.bind('keydown', {store:store}, this._trackShiftKeyEvent);
+	_trackShiftKey: function($tabbables, store) {
+		return $tabbables.bind('keydown', {store:store}, this._trackShiftKeyEvent);
 	},
 
 	/**
@@ -278,8 +279,8 @@ $.extend($.ui.gelmodal, {
 	/**
 	 * stop tracking the use of the shift key when tabbing
 	 */
-	_untrackShiftKey: function($focusables) {
-		return $focusables.unbind('keydown', this._trackShiftKeyEvent);
+	_untrackShiftKey: function($tabbables) {
+		return $tabbables.unbind('keydown', this._trackShiftKeyEvent);
 	},
 
 	/**
@@ -288,11 +289,11 @@ $.extend($.ui.gelmodal, {
 	 * @fixme - "keydown" does not capture repeats when holding the key down
 	 */
 	_captureTabOutOfEdgeElements: function($el) {
-		var focusables = $(':tabbable', $el),
-			last = focusables.last(),
-			first = focusables.filter('input,select,textarea').first();
-		last.bind('keydown', {modal:this, el:$el, focusables:focusables, forwards:true}, this._captureTabOutOfEdgeElementsEvent);
-		first.bind('keydown', {modal:this, el:$el, focusables:focusables, forwards:false}, this._captureTabOutOfEdgeElementsEvent);
+		var tabbables = $(':tabbable', $el),
+			last = tabbables.last(),
+			first = tabbables.filter('input,select,textarea').first();
+		last.bind('keydown', {modal:this, el:$el, tabbables:tabbables, forwards:true}, this._captureTabOutOfEdgeElementsEvent);
+		first.bind('keydown', {modal:this, el:$el, tabbables:tabbables, forwards:false}, this._captureTabOutOfEdgeElementsEvent);
 	},
 
 	/**
@@ -301,11 +302,11 @@ $.extend($.ui.gelmodal, {
 	_captureTabOutOfEdgeElementsEvent: function(event) {
 		var forwards = event.data.forwards;
 		if ( event.keyCode !== $.ui.keyCode.TAB || (event.shiftKey==forwards) ) return true;
-		var focusables = event.data.focusables,
+		var tabbables = event.data.tabbables,
 			modal = event.data.modal,
 			$el = event.data.el,
-			sortedFocusables = modal._sortedFocusables($el);
-		modal._nextItemByTabIndex(sortedFocusables, this, !forwards).focus();
+			sortedTabbables = modal._sortedTabbables($el);
+		modal._nextItemByTabIndex(sortedTabbables, this, !forwards).focus();
 		return false;
 	},
 
@@ -313,25 +314,25 @@ $.extend($.ui.gelmodal, {
 	 * Stop capturing tabbing from the "edge" elements
 	 */
 	_unCaptureTabOutOfEdgeElements: function($el) {
-		var focusables = $(':tabbable', $el),
-			last = focusables.last(),
-			first = focusables.filter('input,select,textarea').first();
+		var tabbables = $(':tabbable', $el),
+			last = tabbables.last(),
+			first = tabbables.filter('input,select,textarea').first();
 		last.unbind('keydown', this._captureTabOutOfLastElementEvent);
 		first.unbind('keydown', this._captureTabOutOfLastElementEvent);
 	},
 
 	/**
-	 * utility method to sort an elements focusable children by tabIndex.
+	 * utility method to sort an elements tabbable children by tabIndex.
 	 * note that since ECMAScript does not guarantee stability in .sort()
 	 * comparison functions, we actually enforce this to mimic tabindex
 	 * and then source-order style sorting.
 	 * 
 	 * @TODO sort out -1 z-indexes
 	 */
-	_sortedFocusables: function($el) {
-		var focusables = $(':focusable', $el),
-			originals = focusables.get();
-		return focusables.sort(function(a,b){
+	_sortedTabbables: function($el, specialClass) {
+		var tabbables = $(':tabbable', $el),
+			originals = tabbables.get();
+		tabbables = tabbables.sort(function(a,b){
 			var a1 = parseInt(a.tabIndex||0,10),
 				b1 = parseInt(b.tabIndex||0,10);
 				if ( a1 == -1 ) a1 = 0;
@@ -343,6 +344,11 @@ $.extend($.ui.gelmodal, {
 			}
 			return a1 - b1;
 		});
+		/* HACK FOR IE NON-VISIBLE WEIRDNESS */
+		if ( tabbables[0].nodeName.toLowerCase() !== 'a' ) {
+			tabbables = $('a', $el).first().add(tabbables);
+		}
+		return tabbables;
 	}
 
 });
