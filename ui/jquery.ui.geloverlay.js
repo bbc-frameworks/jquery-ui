@@ -14,7 +14,6 @@
  */
 (function( $, undefined ) {
 
-
 var uiGeloverlayClasses =
 	'ui-geloverlay ' +
 	'ui-widget ' +
@@ -32,102 +31,86 @@ $.widget("ui.geloverlay", {
 		minWidth: 150,
 		show: null,
 		width: 300,
-		zIndex: 1000,
-		position: undefined
+		zIndex: 300,
+		position: {
+			my: 'center',
+			at: 'center',
+			of: window,
+			collision: 'fit',
+			// ensure that the titlebar is never outside the document
+			using: function(pos) {
+				var topOffset = $(this).css(pos).offset().top;
+				if (topOffset < 0) $(this).css('top', pos.top - topOffset);
+			}
+		}
 	},
 
 	_create: function() {
-
 		var self = this,
-			options = self.options,
-			
 			uiGeloverlay = (self.uiGeloverlay = $('<div></div>'))
-				.appendTo(document.body)
+				// tabIndex makes the div focusable, outline 0 prevents a border on focus in Mozilla
+				.attr('tabIndex', -1).css('outline', 0)
 				.attr({role: 'dialog'})
-				.hide()
-				.addClass(uiGeloverlayClasses + options.geloverlayClass)
-				.css({
-					zIndex: options.zIndex
-				})
-				// setting tabIndex makes the div focusable
-				// setting outline to 0 prevents a border on focus in Mozilla
-				.attr('tabIndex', -1).css('outline', 0),
+				.addClass(uiGeloverlayClasses + self.options.geloverlayClass),
 
-			uiGeloverlayContent = self.element
-				.show()
-				.addClass(
-					'ui-geloverlay-content ' +
-					'ui-widget-content')
-				.appendTo(uiGeloverlay),
+			content = self.element.addClass('ui-geloverlay-content ui-widget-content'),
 
-			uiGeloverlayClose = $('<a href="#"></a>')
-				.addClass(
-					'ui-geloverlay-close ' +
-					'ui-corner-all'
-				)
+			closeLink = $('<a href="#"></a>')
+				.addClass('ui-geloverlay-close ui-corner-all')
 				.attr('role', 'button')
-				.hover(
-					function() {
-						uiGeloverlayClose.addClass('ui-state-hover');
-					},
-					function() {
-						uiGeloverlayClose.removeClass('ui-state-hover');
-					}
-				)
-				.focus(function() {
-					uiGeloverlayClose.addClass('ui-state-focus');
-				})
-				.blur(function() {
-					uiGeloverlayClose.removeClass('ui-state-focus');
-				})
-				.click(function(event) {
+				.hover( function() { closeLink.addClass   ('ui-state-hover'); },
+						function() { closeLink.removeClass('ui-state-hover'); })
+				.focus( function() { closeLink.addClass   ('ui-state-focus'); })
+				.blur(  function() { closeLink.removeClass('ui-state-focus'); })
+				.click( function(event) {
 					self.close(event);
 					return false;
-				})
-				.prependTo(uiGeloverlay),
+				}),
 
-			uiGeloverlayCloseText = (self.uiGeloverlayCloseText = $('<span></span>'))
-				.addClass(
-					'ui-icon ' +
-					'ui-icon-closethick'
-				)
-				.text(options.closeText)
-				.appendTo(uiGeloverlayClose);
+			closeText = (self.closeText = $('<span></span>'))
+				.addClass('ui-icon ui-icon-closethick')
+				.text(self.options.closeText);
+
+		closeText.appendTo(closeLink);
+		closeLink.prependTo(uiGeloverlay);
+		content.appendTo(uiGeloverlay);
+		uiGeloverlay.appendTo(document.body);
 
 		self._isOpen = false;
-
-		this.uiGeloverlay.gelmodal({autoOpen:false, position:this.options.position});
-		if ( this.options.autoOpen ) this.open();
+		self.uiGeloverlay
+			.css('position', 'absolute')
+			.gelmodal({zDiff: self.options.zIndex});
+		if ( self.options.autoOpen ) self.open();
 	},
 
-	destroy: function() {
-		this.uiGeloverlay.gelmodal('destroy');
-		this.uiGeloverlay.hide();
-		this.element
-			.unbind('.geloverlay')
-			.removeData('geloverlay')
-			.removeClass('ui-geloverlay-content ui-widget-content')
-			.hide().appendTo('body');
-		this.uiGeloverlay.remove();
-		
-		return this;
+	_stayInCentre: function(event) {
+		var self = this;
+		$(window).bind('resize.gelmodal scroll.gelmodal', function() {
+			self._position(self.options.position);
+		});
 	},
 
-	widget: function() {
-		return this.uiGeloverlay;
+	open: function() {
+		if (this._isOpen) return undefined;
+		var self = this;
+		if (self.uiGeloverlay.next().length) {
+			self.uiGeloverlay.appendTo('body');
+		}
+		self.uiGeloverlay.show(self.options.show);
+		self.uiGeloverlay.gelmodal('open');
+		self._size();
+		self._position(self.options.position);
+		//self._stayInCentre();
+		self._isOpen = true;
+		self._trigger('open');
+		return self;
 	},
 
 	close: function(event) {
 		var self = this;
-
-		if (false === self._trigger('beforeClose', event)) {
-			return false;
-		}
-
-		this.uiGeloverlay.gelmodal('close');
-		
+		if (false === self._trigger('beforeClose', event)) return false;
+		self.uiGeloverlay.gelmodal('close');
 		self._isOpen = false;
-
 		if (self.options.hide) {
 			self.uiGeloverlay.hide(self.options.hide, function() {
 				self._trigger('close', event);
@@ -136,17 +119,36 @@ $.widget("ui.geloverlay", {
 			self.uiGeloverlay.hide();
 			self._trigger('close', event);
 		}
-		// 
-		// // adjust the maxZ to allow other modal geloverlays to continue to work (see #4309)
-		// maxZ = 0;
-		// $('.ui-geloverlay').each(function() {
-		//  if (this !== self.uiGeloverlay[0]) {
-		//	  maxZ = Math.max(maxZ, $(this).css('z-index'));
-		//  }
-		// });
-		// $.ui.geloverlay.maxZ = maxZ;
-
 		return self;
+	},
+
+	destroy: function() {
+		var self = this;
+		self.uiGeloverlay.gelmodal('destroy');
+		self.uiGeloverlay.hide();
+		self.element
+			.unbind('.geloverlay')
+			.removeData('geloverlay')
+			.removeClass('ui-geloverlay-content ui-widget-content')
+			.hide().appendTo('body');
+		self.uiGeloverlay.remove();
+		$(window).unbind('resize.gelmodal scroll.gelmodal');
+		return this;
+	},
+
+	widget: function() {
+		return this.uiGeloverlay;
+	},
+
+	isOpen: function() {
+		return this._isOpen;
+	},
+
+	_position: function(position) {
+		var self = this;
+		position = $.extend(true, self.options.position, position);
+		self.uiGeloverlay.css({left: '0', top: '0'}); // fixes an IE bug with calculating left:/top:auto
+		self.uiGeloverlay.position(position);
 	},
 
 	/*
@@ -157,7 +159,7 @@ $.widget("ui.geloverlay", {
 		var resize = false;
 		switch (key) {
 			case 'closeText' :
-				this.uiGeloverlayCloseText.text("" + value);
+				this.closeText.text("" + value);
 				break;
 			case 'geloverlayClass' :
 				this.uiGeloverlay.removeClass(this.options.geloverlayClass);
@@ -174,33 +176,6 @@ $.widget("ui.geloverlay", {
 		}
 		if ( resize ) this._size();
 		$.Widget.prototype._setOption.apply(this, arguments);
-	},
-
-	isOpen: function() {
-		return this._isOpen;
-	},
-
-
-	open: function() {
-		if (this._isOpen) { return undefined; }
-
-		var self = this,
-			options = self.options,
-			uiGeloverlay = self.uiGeloverlay;
-
-		if (uiGeloverlay.next().length) {
-			uiGeloverlay.appendTo('body');
-		}
-		
-		uiGeloverlay.show(options.show);
-		
-		self._size();
-		
-		this.uiGeloverlay.gelmodal('open');
-		self._isOpen = true;
-		self._trigger('open');
-		
-		return self;
 	},
 
 	_size: function() {
@@ -236,7 +211,7 @@ $.widget("ui.geloverlay", {
 						Math.max(options.minHeight - nonContentHeight, 0)
 				} : {
 					minHeight: 0,
-					height: Math.max(options.height - nonContentHeight, 0)				
+					height: Math.max(options.height - nonContentHeight, 0)
 			})
 			.show();
 
@@ -244,11 +219,11 @@ $.widget("ui.geloverlay", {
 			this.uiGeloverlay.resizable('option', 'minHeight', this._minHeight());
 		}
 	}
+
 });
 
 $.extend($.ui.geloverlay, {
 	version: "1.8.5"
 });
-
 
 }(jQuery));
