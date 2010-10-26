@@ -50,15 +50,19 @@ test('flash: test flash elements after open/close/destroy of mulitple masks', fu
 });
 
 test('options: hideElement', function() {
-	expect(3);
+	expect(5);
 	var mask = $('.box-1').gelmodal();
 	equals( $('.box-1:hidden').length, 1, '.box-1 element should be hidden by default');
+	mask.gelmodal('open');
+	equals( $('.box-1:hidden').length, 0, '.box-1 element should NOT be hidden after open');
 	mask.gelmodal('destroy');
 	
 	//show element for the next assertion
 	$('.box-1').css('display', 'block');
 	var mask = $('.box-1').gelmodal({hideElement: false});
 	equals( $('.box-1').css('display'), 'block', '.box-1 element should not have been hidden');
+	mask.gelmodal('open');
+	equals( $('.box-1:hidden').length, 0, '.box-1 element should NOT be hidden after open');
 	mask.gelmodal('destroy');
 	equals( $('.box-1').css('display'), 'block', 'destroy method should set to previous display');
 	//unshow to reset
