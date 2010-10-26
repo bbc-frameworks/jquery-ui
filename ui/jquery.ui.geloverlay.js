@@ -93,14 +93,13 @@ $.widget("ui.geloverlay", {
 	open: function() {
 		if (this._isOpen) return undefined;
 		var self = this;
-		if (self.uiGeloverlay.next().length) {
-			self.uiGeloverlay.appendTo('body');
-		}
+		if (self.uiGeloverlay.next().length) self.uiGeloverlay.appendTo('body');
 		self.uiGeloverlay.show(self.options.show);
-		self.uiGeloverlay.gelmodal('open');
 		self._size();
+		// make sure it's positioned before it's made modal and the mask is added
 		self._position(self.options.position);
 		//self._stayInCentre();
+		self.uiGeloverlay.gelmodal('open');
 		self._isOpen = true;
 		self._trigger('open');
 		return self;
@@ -132,7 +131,7 @@ $.widget("ui.geloverlay", {
 			.removeClass('ui-geloverlay-content ui-widget-content')
 			.hide().appendTo('body');
 		self.uiGeloverlay.remove();
-		$(window).unbind('resize.gelmodal scroll.gelmodal');
+		//$(window).unbind('resize.gelmodal scroll.gelmodal');
 		return this;
 	},
 
