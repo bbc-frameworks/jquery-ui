@@ -187,6 +187,7 @@ $.extend($.ui.gelmodal, {
 			previous = modal._focusedElement,
 			backwards = modal._shiftKey,
 			$el = event.data.el;
+			
 		if ( focused !== $(document)[0] && tabbables.index(focused) === -1 ) {
 			try {
 				modal._nextItemByTabIndex(tabbables, previous, backwards).focus();
@@ -204,7 +205,6 @@ $.extend($.ui.gelmodal, {
 		this._unCaptureTabOutOfEdgeElements( $el );
 		$(document).unbind('focusin', this._lockFocusEvent);
 		$el.unbind('keypress', this._closeOnEscapeEvent);
-		$(document).unbind('resize', this._windowResizeEvent);
 		if ( !ignoreStack ) {
 			this.lockStack.pop();
 			var stackLength = this.lockStack.length;
@@ -291,7 +291,10 @@ $.extend($.ui.gelmodal, {
 	_captureTabOutOfEdgeElements: function($el) {
 		var tabbables = $(':tabbable', $el),
 			last = tabbables.last(),
-			first = tabbables.filter('input,select,textarea').first();
+			first = tabbables.first();
+		console.log('edge elements are:');
+		console.log(first);
+		console.log(last);
 		last.bind('keydown', {modal:this, el:$el, tabbables:tabbables, forwards:true}, this._captureTabOutOfEdgeElementsEvent);
 		first.bind('keydown', {modal:this, el:$el, tabbables:tabbables, forwards:false}, this._captureTabOutOfEdgeElementsEvent);
 	},
@@ -335,8 +338,6 @@ $.extend($.ui.gelmodal, {
 		tabbables = tabbables.sort(function(a,b){
 			var a1 = parseInt(a.tabIndex||0,10),
 				b1 = parseInt(b.tabIndex||0,10);
-				if ( a1 == -1 ) a1 = 0;
-				if ( b1 == -1 ) b1 = 0;
 			if ( a1 == b1 ) {
 				var a2 = $.inArray(a, originals);
 				var b2 = $.inArray(b, originals);
@@ -344,10 +345,6 @@ $.extend($.ui.gelmodal, {
 			}
 			return a1 - b1;
 		});
-		/* HACK FOR IE NON-VISIBLE WEIRDNESS */
-		if ( tabbables[0].nodeName.toLowerCase() !== 'a' ) {
-			tabbables = $('a', $el).first().add(tabbables);
-		}
 		return tabbables;
 	}
 
