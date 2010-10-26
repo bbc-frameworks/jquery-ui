@@ -11,7 +11,6 @@
 
 var overlayClasses = 'ui-widget-gelscreenmask';
 
-// TODO add callback triggers
 $.widget( 'ui.gelscreenmask', {
 
 	options: {
@@ -34,11 +33,11 @@ $.widget( 'ui.gelscreenmask', {
 		// hide the element early
 		this.previousDisplay = this.element.css('display');
 		if (this.options.hideElement) this.element.css('display', 'none');
-		
+
 		// keep a track of zIndexes
 		$.ui.gelscreenmask.zIndex += this.options.zDiff;
 		this.zIndex = $.ui.gelscreenmask.zIndex;
-		
+
 		// Reuse the same mask each time by storing it statically
 		$.ui.gelscreenmask.html = $.ui.gelscreenmask.html || $('<div></div>').addClass(overlayClasses);
 		// IE 6 specific, use an iframe instead of hiding elements
@@ -110,10 +109,9 @@ $.widget( 'ui.gelscreenmask', {
 		var maskStack = $.ui.gelscreenmask.maskStack;
 		maskStack.pop();
 		if (maskStack.length == 0) {
-			// if it's the last mask simply hide it
 			$.ui.gelscreenmask.html.remove();
 		} else {
-			
+			// if it's not the last mask, restack the current one
 			$.ui.gelscreenmask.html.css('z-index', maskStack[maskStack.length-1]);
 		}
 	},
@@ -147,19 +145,27 @@ $.extend($.ui.gelscreenmask, {
 	html: null,
 	lockStack: [],
 
-	
-	
+	hideUnderlayElementsOf: function(el) {
+		$.ui.gelscreenmask.undoHiddenElements();
+		var unMaskables = ['object', 'embed'],
+			toHide = $.map(unMaskables, function(v) { return v+':visible' }).join(', '),
+			toKeep = el.find(unMaskables.join(', '));
+		this.undoBuffer =  $(toHide).not(toKeep).css('visibility', 'hidden');
+	},
+
+	undoHiddenElements: function() {
+		if (this.undoBuffer) this.undoBuffer.css('visibility', 'visible');
+	},
+
 	/**
 	 * lock focus to a specific dom element
 	 */
 	_lockFocus: function($el, ignoreStack) {
 		var stackLength = this.lockStack.length,
 			focusables = this._sortedFocusables($el);
-			console.log(focusables.length);
 		if ( !ignoreStack && stackLength > 0 ) this._unlockFocus(this.lockStack[stackLength-1], true);
 		if ( focusables[0] ) {
 			focusables[0].focus();
-			console.log(focusables[0]);
 		}
 		
 		this._trackFocusedElement( $el, this);
@@ -169,6 +175,7 @@ $.extend($.ui.gelscreenmask, {
 		if ( !ignoreStack ) this.lockStack.push($el);
 		return $el;
 	},
+
 	/**
 	 * event for _lockFocus, separated for safe unbinding
 	 */
@@ -183,6 +190,7 @@ $.extend($.ui.gelscreenmask, {
 			modal._nextItemByTabIndex(focusables, previous, backwards).focus();
 		}
 	},
+
 	/**
 	 * unlock focus from a specific dom element
 	 */
@@ -203,7 +211,7 @@ $.extend($.ui.gelscreenmask, {
 		}
 		return $el;
 	},
-	
+
 	/**
 	 * given a tabindex-sorted list of dom elements,
 	 * the previously focused element, and the direction go to the
@@ -219,7 +227,7 @@ $.extend($.ui.gelscreenmask, {
 		}
 		return $list[index];
 	},
-	
+
 	/**
 	 * state value for the last focused element
 	 */
@@ -227,6 +235,7 @@ $.extend($.ui.gelscreenmask, {
 	/**
 	 * track focused element
 	 */
+
 	_trackFocusedElement: function($list, store) {
 		return $list.bind('focusin', {store:store}, this._trackFocusedElementEvent);
 	},
@@ -236,23 +245,26 @@ $.extend($.ui.gelscreenmask, {
 	_trackFocusedElementEvent: function(event) {
 		event.data.store._focusedElement = event.originalTarget || event.srcElement;
 	},
+
 	/**
 	 * stop tracking focused element
 	 */
 	_untrackFocusedElement: function($list) {
 		return $list.unbind('focusin', this._trackFocusedElementEvent);
 	},
-	
+
 	/**
 	 * state value for shift key on tabbing
 	 */
 	_shiftKey: false,
+
 	/**
 	 * track the use of the shift key when tabbing
 	 */
 	_trackShiftKey: function($focusables, store) {
 		return $focusables.bind('keydown', {store:store}, this._trackShiftKeyEvent);
 	},
+
 	/**
 	 * event for tracking the use of the shift key, separated for safe unbinding
 	 */
@@ -260,14 +272,14 @@ $.extend($.ui.gelscreenmask, {
 		if ( event.keyCode !== $.ui.keyCode.TAB ) return;
 		event.data.store._shiftKey = event.shiftKey;
 	},
+
 	/**
 	 * stop tracking the use of the shift key when tabbing
 	 */
 	_untrackShiftKey: function($focusables) {
 		return $focusables.unbind('keydown', this._trackShiftKeyEvent);
 	},
-	
-	
+
 	/**
 	 * Capture tabbing from the "edge" elements (in dom order)
 	 * so that we can avoid jumping out to the browser's chrome
@@ -280,6 +292,7 @@ $.extend($.ui.gelscreenmask, {
 		last.bind('keydown', {modal:this, el:$el, focusables:focusables, forwards:true}, this._captureTabOutOfEdgeElementsEvent);
 		first.bind('keydown', {modal:this, el:$el, focusables:focusables, forwards:false}, this._captureTabOutOfEdgeElementsEvent);
 	},
+
 	/**
 	 * Event to capture tabbing from the "edge" elements
 	 */
@@ -293,6 +306,7 @@ $.extend($.ui.gelscreenmask, {
 		modal._nextItemByTabIndex(sortedFocusables, this, !forwards).focus();
 		return false;
 	},
+
 	/**
 	 * Stop capturing tabbing from the "edge" elements
 	 */
@@ -303,7 +317,7 @@ $.extend($.ui.gelscreenmask, {
 		last.unbind('keydown', this._captureTabOutOfLastElementEvent);
 		first.unbind('keydown', this._captureTabOutOfLastElementEvent);
 	},
-	
+
 	/**
 	 * utility method to sort an elements focusable children by tabIndex.
 	 * note that since ECMAScript does not guarantee stability in .sort()
@@ -327,19 +341,8 @@ $.extend($.ui.gelscreenmask, {
 			}
 			return a1 - b1;
 		});
-	},
-
-	hideUnderlayElementsOf: function(el) {
-		$.ui.gelscreenmask.undoHiddenElements();
-		var unMaskables = ['object', 'embed'],
-			toHide = $.map(unMaskables, function(v) { return v+':visible' }).join(', '),
-			toKeep = el.find(unMaskables.join(', '));
-		this.undoBuffer =  $(toHide).not(toKeep).css('visibility', 'hidden');
-	},
-
-	undoHiddenElements: function() {
-		if (this.undoBuffer) this.undoBuffer.css('visibility', 'visible');
 	}
+
 });
 
 })(jQuery);
