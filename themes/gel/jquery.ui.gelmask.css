@@ -1,7 +1,7 @@
 /*
- * jQuery Gelmask
+ * jQuery Gelmodal
  */
 
 
-.ui-widget-gelscreenmask { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-.ui-widget-gelscreenmask { background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .3; filter:Alpha(Opacity=30); }
+.ui-widget-gelmodal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.ui-widget-gelmodal { background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .3; filter:Alpha(Opacity=30); }
