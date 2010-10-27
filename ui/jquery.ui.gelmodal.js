@@ -26,89 +26,92 @@ $.widget( 'ui.gelmodal', {
 	previousDisplay: null,
 
 	_create: function() {
-		if (this.options.zDiff < 0) {
-			this.element.removeData('gelmodal');
+		var self = this;
+		if (self.options.zDiff < 0) {
+			self.element.removeData('gelmodal');
 			throw new Error('zIndex must be a positive number.');
 		}
 		// hide the element early
-		this.previousDisplay = this.element.css('display');
-		if (this.options.hideElement) this.element.css('display', 'none');
+		self.previousDisplay = self.element.css('display');
+		if (self.options.hideElement) self.element.css('display', 'none');
 
 		// keep a track of zIndexes
-		$.ui.gelmodal.zIndex += this.options.zDiff;
-		this.zIndex = $.ui.gelmodal.zIndex;
+		$.ui.gelmodal.zIndex += self.options.zDiff;
+		self.zIndex = $.ui.gelmodal.zIndex;
 
 		// Reuse the same mask each time by storing it statically
 		$.ui.gelmodal.html = $.ui.gelmodal.html || $('<div></div>').addClass(overlayClasses);
 		// IE 6 specific, use an iframe instead of hiding elements
 		if ($.fn.bgiframe && $.browser.msie && $.browser.version < 7) {
-			this.options.hideUnmaskables = false;
+			self.options.hideUnmaskables = false;
 			$.ui.gelmodal.html.bgiframe();
 		}
 	},
 
 	open: function() {
-		if (this.options.hideUnmaskables) this._hideUnMaskables();
-		this.previousZIndex = this.element.zIndex();
-		this.element.css({
-			'zIndex': this.zIndex + 1, 
+		var self = this;
+		if (self.options.hideUnmaskables) self._hideUnMaskables();
+		self.previousZIndex = self.element.zIndex();
+		self.element.css({
+			'zIndex': self.zIndex + 1, 
 			'display': 'block'
 		});
-		this._addMask();
-		$.ui.gelmodal._lockFocus(this.element);
+		self._addMask();
+		$.ui.gelmodal._lockFocus(self.element);
+		self._trigger('open');
+		return self;
 	},
 
-	close: function() {
-		if (this.options.hideUnmaskables) this._undoUnMaskables();
-		this._removeMask();
-		this.element.css({
-			'zIndex':  this.previousZIndex, 
-			'display': this.previousDisplay
+	close: function(event) {
+		var self = this;
+		if (false === self._trigger('beforeClose', event)) return false;
+		if (self.options.hideUnmaskables) self._undoUnMaskables();
+		self._removeMask();
+		self.element.css({
+			'zIndex':  self.previousZIndex, 
+			'display': self.previousDisplay
 		});
-		$.ui.gelmodal._unlockFocus(this.element);
+		$.ui.gelmodal._unlockFocus(self.element);
 		//this._resizeMask(); //TODO fails in IE currently, figure out why
+		self._trigger('close', event);
+		return self;
 	},
 
 	destroy: function() {
-		this.close();
-		this.element.removeData('gelmodal');
-		if ($.ui.gelmodal.maskStack === 0) {
-			$(window).unbind('resize.gelmodal', function() {
-				that._resizeMask();
-			});
-		}
+		var self = this;
+		self.close();
+		self.element.removeData('gelmodal');
+		if ($.ui.gelmodal.maskStack === 0) $(window).unbind('resize.gelmodal');
 		// decrement the static counter for other masks
-		$.ui.gelmodal.zIndex -= this.options.zDiff;
+		$.ui.gelmodal.zIndex -= self.options.zDiff;
 		return self;
 	},
-	
 
 	widget: function() {
 		return $.ui.gelmodal.html;
 	},
 
 	_addMask: function() {
+		var self = this;
 		var maskStack = $.ui.gelmodal.maskStack;
-		var that = this;
 		// only ever add one mask otherwise update the z-index of the first placed one
 		if (maskStack.length === 0) {
-			$(document.body).append($.ui.gelmodal.html.css('z-index', this.zIndex));
+			$(document.body).append($.ui.gelmodal.html.css('z-index', self.zIndex));
 			$(window).bind('resize.gelmodal', function() {
-				that._resizeMask();
+				self._resizeMask();
 			});
 		} else {
 			// update the zIndex of the mask
-			$.ui.gelmodal.html.css('z-index', this.zIndex);
+			$.ui.gelmodal.html.css('z-index', self.zIndex);
 		}
-		maskStack.push(this.zIndex);
-		// size the mask
-		this._resizeMask();
+		maskStack.push(self.zIndex);
+		self._resizeMask();
 	},
 
 	_removeMask: function() {
 		var maskStack = $.ui.gelmodal.maskStack;
 		maskStack.pop();
-		if (maskStack.length == 0) {
+		if (maskStack.length === 0) {
 			$.ui.gelmodal.html.remove();
 		} else {
 			// if it's not the last mask, restack the current one
@@ -345,9 +348,10 @@ $.extend($.ui.gelmodal, {
 			return a1 - b1;
 		});
 		/* HACK FOR IE NON-VISIBLE WEIRDNESS */
+		/*
 		if ( tabbables[0].nodeName.toLowerCase() !== 'a' ) {
 			tabbables = $('a', $el).first().add(tabbables);
-		}
+		}*/
 		return tabbables;
 	}
 
