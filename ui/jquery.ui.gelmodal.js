@@ -8,10 +8,7 @@
  */
 
 (function( $, undefined ) {
-if (!window.console) {
-  var log = window.opera ? window.opera.postError : alert;
-  window.console = { log: function(str) { log(str) } };
-}
+
 var overlayClasses = 'ui-widget-gelmodal';
 
 $.widget( 'ui.gelmodal', {
