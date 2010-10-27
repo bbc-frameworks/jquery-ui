@@ -18,5 +18,37 @@ test('focuses the first tabbable element', function() {
 		modal.gelmodal('destroy');
 	}
 });
+test('cycles forward after last edge element', function() {
+	
+});
+test('cycles backward after first edge element', function() {
+	
+});
+test('obeys tabIndex without leaving modal', function() {
+	
+});
+test('obeys tabIndex without leaving modal', function() {
+	
+});
+
+test('allows tabbing into focusable flash', function() {
+	
+});
+test('cycling forward works with flash at both ends', function() {
+	
+});
+test('cycling backward works with flash at both ends', function() {
+	
+});
+
+
+test('binds events on open', function() {
+	
+});
+test('unbinds events on close', function() {
+	
+});
+
+
 
 })(jQuery);
