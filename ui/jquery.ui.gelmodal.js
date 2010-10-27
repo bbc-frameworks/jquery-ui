@@ -47,8 +47,8 @@ $.widget( 'ui.gelmodal', {
 		}
 	},
 
-	open: function() {
-		if (false === self._trigger('beforeOpen', event)) {
+	open: function(event) {
+		if (false === this._trigger('beforeOpen', event)) {
 			return;
 		}
 		if (this.options.hideUnmaskables) this._hideUnMaskables();
@@ -61,8 +61,8 @@ $.widget( 'ui.gelmodal', {
 		$.ui.gelmodal._lockFocus(this.element);
 	},
 
-	close: function() {
-		if (false === self._trigger('beforeClose', event)) {
+	close: function(event) {
+		if (false === this._trigger('beforeClose', event)) {
 			return;
 		}
 		if (this.options.hideUnmaskables) this._undoUnMaskables();
