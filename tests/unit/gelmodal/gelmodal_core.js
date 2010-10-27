@@ -49,6 +49,28 @@ test('flash: test flash elements after open/close/destroy of mulitple masks', fu
 	//different browsers use object/embed accordingly..
 });
 
+test('getStackLength: test stack length returns the correct number', function() {
+	expect(5);
+	var modal1 = $('<div></div>').gelmodal().gelmodal('open');
+	var modal2 = $('<div></div>').gelmodal().gelmodal('open');
+	var modal3 = $('<div></div>').gelmodal().gelmodal('open');
+	var modal4 = $('<div></div>').gelmodal().gelmodal('open');
+	equals( $.ui.gelmodal.maskStack.length, 4, 'opening 4 modals should return a length of 4');
+	modal4.gelmodal('close');
+	equals( $.ui.gelmodal.maskStack.length, 3, 'closing modal4 should return a length of 3');
+	modal3.gelmodal('destroy');
+	equals( $.ui.gelmodal.maskStack.length, 2, 'destroying modal3 should return a length of 2');
+	var modal5 = $('<div></div>').gelmodal().gelmodal('open');
+	equals( $.ui.gelmodal.maskStack.length, 3, 'opening modal5 should return a length of 3');
+
+	modal1.gelmodal('destroy');
+	modal2.gelmodal('destroy');
+	modal4.gelmodal('destroy');
+	modal5.gelmodal('destroy');
+
+	equals( $.ui.gelmodal.maskStack.length, 0, 'destroying all should return a length of 0');
+});
+
 test('options: hideElement', function() {
 	expect(5);
 	var mask = $('.box-1').gelmodal();
@@ -179,6 +201,109 @@ test('zIndexes: with more than one dialog created, \'destroy\' decrements static
 	equals( $.ui.gelmodal.zIndex, 5, 'static zIndex counter $.ui.gelmodal.zIndex should be the addition of 5' );
 	mask2.gelmodal('destroy');
 	equals( $.ui.gelmodal.zIndex, 0, 'static zIndex counter $.ui.gelmodal.zIndex should have been reset to default' );
+});
+
+test('events: open', function() {
+	expect(8);
+
+	var el = $('<div></div>');
+	el.gelmodal({
+		open: function(ev, ui) {
+			// theses shouldn't run because the open method is never called
+			ok(el.data('gelmodal'), 'interal data is set');
+			ok(true, 'autoOpen: true fires open callback');
+			equals(this, el[0], 'context of callback');
+			equals(ev.type, 'gelmodalopen', 'event type in callback');
+			same(ui, {}, 'ui hash in callback');
+		}
+	});
+	el.remove();
+
+	var el = $('<div></div>');
+	el.gelmodal({
+		open: function(ev, ui) {
+			ok(true, '.gelmodal(\'open\') fires open callback');
+			equals(this, el[0], 'context of callback');
+			equals(ev.type, 'gelmodalopen', 'event type in callback');
+			same(ui, {}, 'ui hash in callback');
+		}
+	}).bind('gelmodalopen', function(ev, ui) {
+		ok(el.data('gelmodal'), 'interal data is set');
+		ok(true, 'gelmodal(\'open\') fires open event');
+		equals(this, el[0], 'context of event');
+		same(ui, {}, 'ui hash in event');
+	});
+	el.gelmodal('open')
+	el.gelmodal('close');
+	el.gelmodal('destroy');
+	el.remove();
+});
+
+test("events: close", function() {
+	expect(7);
+
+	var el2 = $('<span></span>').gelmodal({
+		close: function(ev, ui) {
+			ok(true, '.gelmodal("close") fires close callback');
+			equals(this, el2[0], "context of callback");
+			equals(ev.type, 'gelmodalclose', 'event type in callback');
+			same(ui, {}, 'ui hash in callback');
+		}
+	}).bind('gelmodalclose', function(ev, ui) {
+		ok(true, '.gelmodal("close") fires gelmodalclose event');
+		equals(this, el2[0], 'context of event');
+		same(ui, {}, 'ui hash in event');
+	});
+	el2.gelmodal('close');
+});
+
+test("events: beforeClose", function() {
+	expect(14);
+	var el1, el2, el3, widget;
+
+	el1 = $('<div></div>').gelmodal({
+		beforeClose: function(ev, ui) {
+			ok(true, '.gelmodal("close") fires beforeClose callback');
+			equals(this, el1[0], "context of callback");
+			equals(ev.type, 'gelmodalbeforeclose', 'event type in callback');
+			same(ui, {}, 'ui hash in callback');
+			return false;
+		}
+	});
+	widget = el1.gelmodal('widget');
+	el1.gelmodal('open');
+	el1.gelmodal('close');
+	ok(widget.is(":visible"), 'beforeClose CREATE OPTION callback should prevent gelmodal from closing');
+
+	var el2 = $('<div></div>').gelmodal();
+	el2.gelmodal('open');
+	el2.gelmodal('option', 'beforeClose', function(ev, ui) {
+		ok(true, '.gelmodal("close") fires beforeClose callback');
+		equals(this, el2[0], "context of callback");
+		equals(ev.type, 'gelmodalbeforeclose', 'event type in callback');
+		same(ui, {}, 'ui hash in callback');
+		return false;
+	});
+	el2.gelmodal('close');
+	widget = el2.gelmodal('widget');
+	ok(widget.is(":visible"), 'beforeClose ADDED OPTION callback should prevent gelmodal from closing');
+
+	var el3 = $('<div></div>').gelmodal().bind('gelmodalbeforeclose', function(ev, ui) {
+		ok(true, '.gelmodal("close") triggers gelmodalbeforeclose event');
+		equals(this, el3[0], "context of event");
+		same(ui, {}, 'ui hash in event');
+		return false;
+	});
+	el3.gelmodal('open');
+	el3.gelmodal('close');
+	widget = el3.gelmodal('widget');
+	ok(widget.is(":visible"), 'gelmodalbeforeclose event should prevent gelmodal from closing');
+
+	// clean up previous tests
+	el1.gelmodal({beforeClose: function() { return true; }}).gelmodal('destroy');
+	el2.gelmodal({beforeClose: function() { return true; }}).gelmodal('destroy');
+	el3.gelmodal().unbind('gelmodalbeforeclose');
+	el3.gelmodal({beforeClose: function() { return true; }}).gelmodal('destroy');
 });
 
 })(jQuery);
