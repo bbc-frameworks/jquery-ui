@@ -8,7 +8,10 @@
  */
 
 (function( $, undefined ) {
-
+if (!window.console) {
+  var log = window.opera ? window.opera.postError : alert;
+  window.console = { log: function(str) { log(str) } };
+}
 var overlayClasses = 'ui-widget-gelmodal';
 
 $.widget( 'ui.gelmodal', {
@@ -327,7 +330,9 @@ $.extend($.ui.gelmodal, {
 	 * comparison functions, we actually enforce this to mimic tabindex
 	 * and then source-order style sorting.
 	 * 
-	 * @TODO sort out -1 z-indexes
+	 * Some things are "tabbable" even if they have a zIndex -1 (e.g. flash)
+	 * so we reset these to behave as "0" since this is close to observed
+	 * behaviour.
 	 */
 	_sortedTabbables: function($el) {
 		var tabbables = $(':tabbable', $el),
@@ -335,6 +340,8 @@ $.extend($.ui.gelmodal, {
 		tabbables = tabbables.sort(function(a,b){
 			var a1 = parseInt(a.tabIndex||0,10),
 				b1 = parseInt(b.tabIndex||0,10);
+			if ( a1 == -1 ) a1 = 0;
+			if ( b1 == -1 ) b1 = 0;
 			if ( a1 == b1 ) {
 				var a2 = $.inArray(a, originals);
 				var b2 = $.inArray(b, originals);
