@@ -51,6 +51,9 @@ $.widget( 'ui.gelmodal', {
 	},
 
 	open: function() {
+		if (false === self._trigger('beforeOpen', event)) {
+			return;
+		}
 		if (this.options.hideUnmaskables) this._hideUnMaskables();
 		this.previousZIndex = this.element.zIndex();
 		this.element.css({
@@ -62,6 +65,9 @@ $.widget( 'ui.gelmodal', {
 	},
 
 	close: function() {
+		if (false === self._trigger('beforeClose', event)) {
+			return;
+		}
 		if (this.options.hideUnmaskables) this._undoUnMaskables();
 		this._removeMask();
 		this.element.css({

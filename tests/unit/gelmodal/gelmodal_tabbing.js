@@ -24,6 +24,12 @@ test('cycles forward after last edge element', function() {
 test('cycles backward after first edge element', function() {
 	
 });
+test('cycling forward works with flash at both ends', function() {
+	
+});
+test('cycling backward works with flash at both ends', function() {
+	
+});
 test('obeys tabIndex without leaving modal', function() {
 	
 });
@@ -32,12 +38,6 @@ test('obeys tabIndex without leaving modal', function() {
 });
 
 test('allows tabbing into focusable flash', function() {
-	
-});
-test('cycling forward works with flash at both ends', function() {
-	
-});
-test('cycling backward works with flash at both ends', function() {
 	
 });
 
