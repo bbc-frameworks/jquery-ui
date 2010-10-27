@@ -48,8 +48,9 @@ $.widget( 'ui.gelmodal', {
 		}
 	},
 
-	open: function() {
+	open: function(event) {
 		var self = this;
+		if (false === self._trigger('beforeOpen', event)) return;
 		if (self.options.hideUnmaskables) self._hideUnMaskables();
 		self.previousZIndex = self.element.zIndex();
 		self.element.css({
@@ -190,6 +191,7 @@ $.extend($.ui.gelmodal, {
 			previous = modal._focusedElement,
 			backwards = modal._shiftKey,
 			$el = event.data.el;
+			
 		if ( focused !== $(document)[0] && tabbables.index(focused) === -1 ) {
 			try {
 				modal._nextItemByTabIndex(tabbables, previous, backwards).focus();
@@ -207,7 +209,6 @@ $.extend($.ui.gelmodal, {
 		this._unCaptureTabOutOfEdgeElements( $el );
 		$(document).unbind('focusin', this._lockFocusEvent);
 		$el.unbind('keypress', this._closeOnEscapeEvent);
-		$(document).unbind('resize', this._windowResizeEvent);
 		if ( !ignoreStack ) {
 			this.lockStack.pop();
 			var stackLength = this.lockStack.length;
@@ -294,7 +295,7 @@ $.extend($.ui.gelmodal, {
 	_captureTabOutOfEdgeElements: function($el) {
 		var tabbables = $(':tabbable', $el),
 			last = tabbables.last(),
-			first = tabbables.filter('input,select,textarea').first();
+			first = tabbables.first();
 		last.bind('keydown', {modal:this, el:$el, tabbables:tabbables, forwards:true}, this._captureTabOutOfEdgeElementsEvent);
 		first.bind('keydown', {modal:this, el:$el, tabbables:tabbables, forwards:false}, this._captureTabOutOfEdgeElementsEvent);
 	},
@@ -330,7 +331,9 @@ $.extend($.ui.gelmodal, {
 	 * comparison functions, we actually enforce this to mimic tabindex
 	 * and then source-order style sorting.
 	 * 
-	 * @TODO sort out -1 z-indexes
+	 * Some things are "tabbable" even if they have a zIndex -1 (e.g. flash)
+	 * so we reset these to behave as "0" since this is close to observed
+	 * behaviour.
 	 */
 	_sortedTabbables: function($el) {
 		var tabbables = $(':tabbable', $el),
@@ -338,8 +341,8 @@ $.extend($.ui.gelmodal, {
 		tabbables = tabbables.sort(function(a,b){
 			var a1 = parseInt(a.tabIndex||0,10),
 				b1 = parseInt(b.tabIndex||0,10);
-				if ( a1 == -1 ) a1 = 0;
-				if ( b1 == -1 ) b1 = 0;
+			if ( a1 == -1 ) a1 = 0;
+			if ( b1 == -1 ) b1 = 0;
 			if ( a1 == b1 ) {
 				var a2 = $.inArray(a, originals);
 				var b2 = $.inArray(b, originals);
