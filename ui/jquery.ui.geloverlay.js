@@ -131,7 +131,9 @@ $.widget("ui.geloverlay", {
 			.removeClass('ui-geloverlay-content ui-widget-content')
 			.hide().appendTo('body');
 		self.uiGeloverlay.remove();
-		//$(window).unbind('resize.gelmodal scroll.gelmodal');
+		//if ($.ui.gelmodal.maskStack.length === 0) {
+		//	$(window).unbind('resize.gelmodal scroll.gelmodal');
+		//}
 		return this;
 	},
 
